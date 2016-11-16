@@ -89,6 +89,39 @@ bool Hand::operator< (const Hand& other_hand) const {
 	return false;
 }
 
+Card& Hand::operator[](const size_t location) {
+	try {
+		if (location >= 0 && location < hand_vector.size()) {
+			return hand_vector.at(location);
+		}
+	}
+	catch (const std::out_of_range& oor) {
+		throw "Accessor location out of bounds.";
+	}
+}
+
+void Hand::remove_card(const size_t location) {
+	try {
+		vector<Card> temp;
+		int index = 0;
+		//avoid invalidated iterators with STL erase method by copying 
+		//all values (except "location") into a new vector
+		while (index < location) {
+			temp.push_back(hand_vector.at(index));
+			index++;
+		}
+		index++;
+		while (index < hand_vector.size()) {
+			temp.push_back(hand_vector.at(index));
+			index++;
+		}
+		hand_vector = temp;
+	}
+	catch (size_t n) {
+		throw "Erasure location out of bounds.";
+	}
+}
+
 string Hand::asString() const {
 	string toReturn;
 	for (int i = 0; i < this->size(); ++i) {
