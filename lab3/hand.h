@@ -23,6 +23,8 @@ class Hand {
 		friend ostream& operator<< (ostream& o, const Hand& hand);
 		friend void operator<< (Hand& hand, Deck& deck);
 		friend bool poker_rank(const Hand& hand1, const Hand& hand2);
+		Card& operator[](size_t location);
+		void remove_card(size_t location);
 	private:
 		vector<Card> hand_vector;
 };
