@@ -59,6 +59,10 @@ int Deck::size() const {
 	return deck_vector.size();
 }
 
+int Deck::add_card(Card c) {
+	this->deck_vector.push_back(c);
+}
+
 ostream& operator<< (ostream& o, const Deck& deck) {
 	for (Card c : deck.deck_vector) {
 		//use enum_rank_strings so that enum text is printed instead of enum numbers
