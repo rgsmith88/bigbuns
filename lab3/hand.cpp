@@ -1,5 +1,4 @@
 #include "stdafx.h"
-#include "classes.h"
 #include "functions.h"
 #include "hand.h"
 #include "deck.h"
