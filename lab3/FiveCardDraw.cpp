@@ -16,7 +16,7 @@
 
 
 FiveCardDraw::FiveCardDraw()
-	: dealer(0), deck(0) {
+	: dealer(0) {
 	for (int i = 0; i < enum_suit_strings.length; i++) { //variable not accessible HELP CUCKIER
 		for (int j = 0; j < enum_rank_strings.length; j++) {
 			Card c;
