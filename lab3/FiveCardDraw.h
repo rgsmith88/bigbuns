@@ -23,7 +23,7 @@ public:
 
 private:
 	size_t dealer; //start at 0
-	Deck deck; //under the assumption that the deck constructor initializes empty deck
+	Deck discardDeck; //under the assumption that the deck constructor initializes empty deck
 	int before_turn(player & p); //should be virtual
 
 };
