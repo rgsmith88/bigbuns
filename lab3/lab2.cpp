@@ -12,6 +12,17 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+	
+	if (argc < 3){ //program needs at least 3 inputs
+		const char* message = "Please pass the name of a game followed by the names of two or more players";
+		int usageError = usageMessage(argv[0], message); // program should call the usage message function
+		return too_few_arguments; // return the value returned from that call
+	}
+	
+	
+	
+	
+	
 	if (argc == 1) { // program should first check that exactly one argument has been passed to it
 		const char* message = "In order to use the program type in two or three arguments when using the method with the correct syntax";
 		int usageError = usageMessage(argv[0], message); // program should call the usage message function
