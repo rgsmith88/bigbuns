@@ -13,16 +13,29 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 	
-	if (argc < 3){ //program needs at least 3 inputs
+	if (argc < 4){ //program needs at least 3 inputs
 		const char* message = "Please pass the name of a game followed by the names of two or more players";
 		int usageError = usageMessage(argv[0], message); // program should call the usage message function
 		return too_few_arguments; // return the value returned from that call
 	}
 	
+	start_game(argv[1]);
+		
+	instance();
+	
+	while (players.size() >= 2){ //at least two palyers in the game
+		before_round();
+		round();
+		after_round();
+	}
+	
+	if (players.size() == 0){
+		stop_game();
+		return 0;
+	}
 	
 	
-	
-	
+	/*
 	if (argc == 1) { // program should first check that exactly one argument has been passed to it
 		const char* message = "In order to use the program type in two or three arguments when using the method with the correct syntax";
 		int usageError = usageMessage(argv[0], message); // program should call the usage message function
@@ -92,4 +105,5 @@ int main(int argc, char* argv[]) {
 	}
 
 	return success;
+	*/
 }
