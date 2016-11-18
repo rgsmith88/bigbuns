@@ -34,7 +34,8 @@ enum outcome {
 	no_arguments = 5,
 	just_shuffle = 6,
 	need_shuffle = 7,
-	too_many_arguments = 8
+	too_many_arguments = 8,
+	too_few_arguments = 9
 };
 
 Card parseString(string card_string);
