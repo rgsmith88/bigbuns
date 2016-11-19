@@ -19,14 +19,20 @@ int main(int argc, char* argv[]) {
 		return too_few_arguments; // return the value returned from that call
 	}
 	
-	start_game(argv[1]);
+	const char* program;
+	
+	program = argv[1];
+	
+	Game myGame;
+	
+	myGame.start_game(program);
 		
-	instance();
+	myGame.instance();
 	
 	while (players.size() >= 2){ //at least two palyers in the game
-		before_round();
-		round();
-		after_round();
+		myGame.before_round();
+		myGame.round();
+		myGame.after_round();
 	}
 	
 	if (players.size() == 0){
