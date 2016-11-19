@@ -45,7 +45,7 @@ FiveCardDraw::FiveCardDraw()
 	}
 }
 
-int before_turn(Player & p) {
+int FiveCardDraw::before_turn(Player & p) {
 	//add implementation
 	int cardsToDiscard = 0;
 	cout << "player: " << p.name << "wins: " << p.handsWon << "losses: " << p.handsLost << endl;
@@ -71,14 +71,22 @@ int before_turn(Player & p) {
 		cin >> discard;
 		try {
 			Card toDiscard = p.hand[stoi(discard)];
-			discardDeck.push_back(toDiscard);
-			p.hand.removeCard(stoi(discard));
+			discardDeck.add_card(toDiscard);
+			p.hand.remove_card(stoi(discard));
 			cardsToDiscard--;
 		}
-		catch ("outOfBounds") {
-			cout << "out of bounds!" << endl;
+		catch (int e) {
+			switch (e) {
+			case out_of_bounds:
+				std::cout << "out of bounds!" << std::endl;
+				break;
+			default:
+				std::cout << "try again" << std::endl;
+			}
+
 		}
-		catch () {
+
+		catch (...) {
 			cout << "try again" << endl;
 		}
 	}
