@@ -34,12 +34,15 @@ enum outcome {
 	no_arguments = 5,
 	just_shuffle = 6,
 	need_shuffle = 7,
-	too_many_arguments = 8
+	too_many_arguments = 8,
+
+	instance_not_available = 9,
+	game_already_started = 10,
+	unknown_game = 11,
+	no_game_in_progress = 12, 
+	already_playing = 13,
+	nont_enough_cards = 14
 };
-
-Card parseString(string card_string);
-
-int parseCardFile(vector<Card> &cards, char * filename);
 
 char* handRank(const vector<Card> & hand);
 

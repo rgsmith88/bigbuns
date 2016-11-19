@@ -14,38 +14,34 @@ Card::Card(card_suit s, card_rank r) :
 
 card_suit getSuit(char sChar) {
 	switch (sChar) {
-	case 'C': return clubs;
-	case 'c': return clubs;
-	case 'D': return diamonds;
-	case 'd': return diamonds;
-	case 'H': return hearts;
-	case 'h': return hearts;
-	case 'S': return spades;
-	case 's': return spades;
-	default: return invalidSuit;
+		case 'C': return clubs;
+		case 'c': return clubs;
+		case 'D': return diamonds;
+		case 'd': return diamonds;
+		case 'H': return hearts;
+		case 'h': return hearts;
+		case 'S': return spades;
+		case 's': return spades;
+		default: return invalidSuit;
 	}
 }
 
 card_rank getRank(char rChar) {
 	switch (rChar) {
-	case '2': return two;
-	case '3': return three;
-	case '4': return four;
-	case '5': return five;
-	case '6': return six;
-	case '7': return seven;
-	case '8': return eight;
-	case '9': return nine;
-	case '0': return ten; //so that ten can be represented by a char
-	case 'J': return jack;
-	case 'j': return jack;
-	case 'Q': return queen;
-	case 'q': return queen;
-	case 'K': return king;
-	case 'k': return king;
-	case 'A': return ace;
-	case 'a': return ace;
-	default: return invalidRank;
+		case 2: return two;
+		case 3: return three;
+		case 4: return four;
+		case 5: return five;
+		case 6: return six;
+		case 7: return seven;
+		case 8: return eight;
+		case 9: return nine;
+		case 10: return ten; //so that ten can be represented by a char
+		case 11: return jack;
+		case 12: return queen;
+		case 13: return king;
+		case 14: return ace;
+		default: return invalidRank;
 	}
 }
 
@@ -62,61 +58,6 @@ bool Card::operator< (const Card & card) const {
 	card_suit cs = card.suit;
 	card_rank cr = card.rank;
 	return ((enum_rank_ints[rank] < enum_rank_ints[cr]) || ((enum_rank_ints[rank] == enum_rank_ints[cr]) && (enum_suit_ints[suit] < enum_suit_ints[cs])));
-}
-
-Card parseString(string card_string) {
-	char rChar;
-	char sChar;
-	if (card_string.at(0) == '1') { //to check if rank is  10
-		rChar = '0'; //uses '0' instead of '10' because var is a char
-		sChar = card_string.at(2);
-	}
-	else {
-		rChar = card_string.at(0);
-		sChar = card_string.at(1);
-	}
-	card_suit s = getSuit(sChar);
-	card_rank r = getRank(rChar);
-	Card card = Card(s, r);
-	return card;
-}
-
-int parseCardFile(vector<Card> &cards, char * filename) {
-	ifstream in(filename);
-	if (in.is_open()) {
-		string localLine;
-		while (getline(in, localLine)) {
-			istringstream iss(localLine);
-			bool empty = true; //kees track of empty lines, allowowing program to skip lines without printing out "too many" or "too few"
-			vector<Card> hand; //create temporary vector to represent hand
-			string cardString;
-			while (iss >> cardString && cardString.substr(0, 2) != "//") {
-				if (cardString.length() == 2 || cardString.length() == 3) { //make sure string is right length
-					empty = false; //
-					Card card = parseString(cardString);
-					if (card.suit != invalidSuit && card.rank != invalidRank) { //make sure ranks are between 2-Ace and suits one of the four
-						hand.push_back(card); //push back string to temporary vector hand
-					}
-					else { cout << "String not well-formed" << endl; }
-				}
-				else { cout << "String not well-formed" << endl; }
-				//iss >> cardString;
-			}
-			if (hand.size() == 5) { //check if there were 5 valid strings
-				for (int i = 0; i < 5; ++i) {
-					cards.push_back(hand.at(i)); //push back those 5 strings to cards
-				}
-			}
-			else if (empty == false && hand.size() < 5) {
-				cout << "There were too few valid card definition strings in this line, skipping line" << endl;
-			}
-			else if (empty == false && hand.size() > 5) {
-				cout << "There were too many valid card definition strings in this line, skipping line" << endl;
-			}
-		}
-		return success;
-	}
-	return file_open_error;
 }
 
 char* handRank(const vector<Card> & hand) {
