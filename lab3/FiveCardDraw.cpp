@@ -101,3 +101,31 @@ int FiveCardDraw::turn(Player& p) {
 	}
 	return success;
 }
+
+int FiveCardDraw::after_turn(Player& p) {
+	cout << "Player Name: " << p.name << endl;
+	cout << p.hand << endl;
+	return success;
+}
+
+int FiveCardDraw::before_round() {
+	(this -> main_deck).shuffle(); //shuffle main deck
+	int start = (this -> dealer) + 1;
+	int num_players = (this -> players).size();
+	if ((this -> dealer) == num_players - 1) {
+		start = 0;
+	}
+	for (int i = 0; i < 5; ++i) {
+		for (int j = 0; j < (this -> players).size(); ++j) {
+			int position = (start + j) % (this -> players).size();
+			Player current_player = (this -> players).at(position);
+			current_player.hand << (this -> main_deck);
+		}
+	}
+	for (int j = 0; j < (this -> players).size(); ++j) {
+		int position = (start + j) % (this -> players).size();
+		Player current_player = (this -> players).at(position);
+		this -> before_turn(*current_player);
+	}
+	return success;
+}
