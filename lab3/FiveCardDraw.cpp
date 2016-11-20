@@ -13,23 +13,6 @@
 #include <chrono>
 #include <memory>
 
-
-
-#include "stdafx.h"
-#include "deck.h"
-#include "functions.h"
-#include "game.h"
-#include "FiveCardDraw.h"
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <algorithm>
-#include <random>
-#include <chrono>
-#include <memory>
-
 using namespace std;
 
 FiveCardDraw::FiveCardDraw()
@@ -118,14 +101,32 @@ int FiveCardDraw::before_round() {
 	for (int i = 0; i < 5; ++i) {
 		for (int j = 0; j < (this -> players).size(); ++j) {
 			int position = (start + j) % (this -> players).size();
-			Player current_player = (this -> players).at(position);
+			Player current_player = *(this -> players).at(position);
 			current_player.hand << (this -> main_deck);
 		}
 	}
 	for (int j = 0; j < (this -> players).size(); ++j) {
 		int position = (start + j) % (this -> players).size();
-		Player current_player = (this -> players).at(position);
-		this -> before_turn(*current_player);
+		Player current_player = *(this -> players).at(position);
+		this -> before_turn(current_player);
+	}
+	return success;
+}
+
+int FiveCardDraw::round() {
+	int start = (this -> dealer) + 1;
+	int num_players = (this -> players).size();
+	if ((this -> dealer) == num_players - 1) {
+		start = 0;
+	}
+	for (int j = 0; j < (this -> players).size(); ++j) {
+		int position = (start + j) % (this -> players).size();
+		Player current_player = *(this -> players).at(position);
+		int turn_result = this -> turn(current_player);
+		if (turn_result != success) {
+			return turn_result;
+		}
+		int after_turn_result = this -> after_turn(current_player);
 	}
 	return success;
 }
