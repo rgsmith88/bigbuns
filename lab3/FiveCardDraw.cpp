@@ -272,8 +272,6 @@ cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
 	}
 
 bool joinGame = true;
-
-bool joinGame = true;
 while (joinGame) {
 	cout << "Do any players want to join the game? Please enter 'yes' or 'no'." << endl;
 	string responseJoin;
