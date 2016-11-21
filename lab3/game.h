@@ -23,6 +23,7 @@ class Game {
 		static void stop_game();
 		void add_player(const string& str); //change return type?
 		shared_ptr<Player> find_player(const string& str);
+		void remove_player(const string& name);
 		//Don't need to include virtual destructor b/c of shared_ptrs
 		virtual int before_turn (Player& player) = 0;
 		virtual int turn(Player& player) = 0;
