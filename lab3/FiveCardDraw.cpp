@@ -169,29 +169,25 @@ int FiveCardDraw::after_round() {
 
 	std::sort(temp_players.begin(), temp_players.end(), compareHand);
 
-	vector<int> winners;
-	winners.push_back(0);
-	for (size_t current_check = 1; current_check < temp_players.size(); ++current_check) {
-		shared_ptr<Player> player1 = temp_players.at(0);
-		shared_ptr<Player> player_check = temp_players.at(current_check);
-		if (players_same_hands(player1, player_check)) {
-			winners.push_back(current_check);
+	for (size_t i = 0; i < temp_players.size(); i++) {
+		if (i == 0) {
+			++(temp_players.at(i)->handsWon);
+			cout << temp_players.at(i)->name << endl;
+			cout << temp_players.at(i)->handsWon << " hands won " << endl;
+			cout << temp_players.at(i)->handsLost << " hands lost " << endl;
+			cout << "current hand" << endl;
+			cout << temp_players.at(i)->hand << endl;
+		}
+		else {
+			++(temp_players[i]->handsLost);
+			cout << temp_players.at(i)->name << endl;
+			cout << temp_players.at(i)->handsWon << " hands won " << endl;
+			cout << temp_players.at(i)->handsLost << " hands lost " << endl;
+			cout << "current hand" << endl;
+			cout << temp_players.at(i)->hand << endl;
 		}
 	}
 
-	for (size_t i = 0; i < temp_players.size(); i++) {
-		if (find(winners.begin(), winners.end(), i) != winners.end()) {
-			++(temp_players.at(i)->handsWon);
-		}
-		else {
-			++(temp_players.at(i)->handsLost);
-		}
-		cout << temp_players.at(i)->name << endl;
-		cout << temp_players.at(i)->handsWon << " hands won " << endl;
-		cout << temp_players.at(i)->handsLost << " hands lost " << endl;
-		cout << "current hand" << endl;
-		cout << temp_players.at(i)->hand << endl;
-	}
 
 	for (size_t i = 0; i < temp_players.size(); ++i) {
 		Player current_player = *temp_players.at(i);
@@ -204,4 +200,56 @@ int FiveCardDraw::after_round() {
 	}
 
 	main_deck.getCardsFromDeck(discardDeck);
+	bool leaveGame = false;
+	while (!leaveGame) {
+		cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
+		string responseLeave;
+		cin >> responseLeave;
+		if (responseLeave == "yes" || responseLeave == "Yes") {
+			cout << "Which player wants to leave? Please enter the name of depating player." << endl;
+			string responseName;
+			cin >> responseName;
+			shared_ptr<Player> player = find_player(responseName);
+
+			if (player) {
+				//save player to ofstream. Need to define save function
+				string fileName = player->name + ".txt";
+				ofstream playerFile(fileName, ios::trunc);
+				if (playerFile.is_open())
+				{
+					playerFile << "W" << player->handsWon << "\n";
+					playerFile << "L" << player->handsLost << "\n";
+					playerFile.close();
+				}
+
+				remove_player(responseName);//remove player. Ensure remove player is defined correctly
+			}
+		}
+		else if (responseLeave == "no" || responseLeave == "No") {
+			leaveGame = true;
+		}
+	}
+	bool joinGame = true;
+	while (joinGame == true) {
+		cout << "Do any players want to join the game? Please enter 'yes' or 'no'." << endl;
+		string responseJoin;
+		cin >> responseJoin;
+		if (responseJoin == "no" || responseJoin == "No") {
+			joinGame = false;
+		}
+		else if (responseJoin == "yes" || responseJoin == "Yes") {
+			cout << "Which player wants to join? Please enter the name of joining player." << endl;
+			string responseNameJoin;
+			cin >> responseNameJoin;
+			try {
+				add_player(responseNameJoin);
+			}
+			catch (int e) {
+				if (e = already_playing) {
+					cout << "Player already added to game." << endl;
+				}
+			}
+		}
+	}
+	return 0;
 }
