@@ -264,7 +264,7 @@ cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
 		
 		if (player) {
 			//save player to ofstream. Need to define save function
-			remove_player(player->name);//remove player
+			remove_player(player->name);//remove player. Ensure remove player is defined correctly
 		}
 	}
 	else if (responseLeave == "no" || responseLeave == "No"){
