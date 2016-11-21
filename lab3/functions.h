@@ -41,7 +41,7 @@ enum outcome {
 	unknown_game = 11,
 	no_game_in_progress = 12, 
 	already_playing = 13,
-	nont_enough_cards = 14
+	not_enough_cards = 14
 };
 
 char* handRank(const vector<Card> & hand);
