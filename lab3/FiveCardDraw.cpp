@@ -130,3 +130,57 @@ int FiveCardDraw::round() {
 	}
 	return success;
 }
+bool compareHand(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2) {
+	if (!p1) {
+		return false;
+	}
+	if (!p2) {
+		return true;
+	}
+	return poker_rank(p1->hand, p2->hand);
+}
+
+int FiveCardDraw::after_round() {
+
+	std::vector<std::shared_ptr<Player>> temp_players(players);
+
+	std::sort(temp_players.begin(), temp_players.end(), compareHand);
+
+	for (int i=0; i < temp_players.size; i++) {
+		if (i == 0) {
+			++(temp_players.at(i)->handsWon);
+			cout << temp_players.at(i)->name << endl;
+			cout << temp_players.at(i)->handsWon << " hands won " << endl;
+			cout << temp_players.at(i)->handsLost << " hands lost " << endl;
+			cout << "current hand" << endl;
+			cout << temp_players.at(i)->hand << endl;
+		}
+		else {
+			++(temp_players[i]->handsLost);
+			cout << temp_players.at(i)->name << endl;
+			cout << temp_players.at(i)->handsWon << " hands won " << endl;
+			cout << temp_players.at(i)->handsLost << " hands lost " << endl;
+			cout << "current hand" << endl;
+			cout << temp_players.at(i)->hand << endl;
+		}
+	}
+
+	
+	for (int i=0; i < temp_players.size; ++i) {
+		Player current_player = *temp_players.at(i);
+		for (int j = 0; j < current_player.hand.size(); ++j) {
+			Card toMove = current_player.hand[j];
+			(this -> main_deck).add_card(toMove);
+			current_player.hand.remove_card(j);
+		}
+
+	}
+
+	for (int i = 0; i < discardDeck.size(); i++) {
+		Card toMove = discardDeck.deck_vector.at(i);
+		(this->main_deck).add_card(toMove);
+
+	}
+
+
+}
