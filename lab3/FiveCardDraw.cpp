@@ -272,7 +272,7 @@ cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
 	}
 
 bool joinGame = true;
-while (joinGame) {
+while (joinGame == true) {
 	cout << "Do any players want to join the game? Please enter 'yes' or 'no'." << endl;
 	string responseJoin;
 	cin >> responseJoin;
@@ -283,6 +283,11 @@ while (joinGame) {
 		cout << "Which player wants to join? Please enter the name of joining player." << endl;
 		string responseNameJoin;
 		cin >> responseNameJoin;
-		add_player(responseNameJoin);
-	}
+		try {
+			add_player(responseNameJoin);
+		}
+		catch(int a){
+			throw already_playing;
+		}
+	}	
 }
