@@ -63,3 +63,11 @@ void Game::add_player(const string& str) {
 		players.push_back(make_shared<Player>(str));
 	}
 }
+void Game::remove_player(const string& str) {
+	for (unsigned int i = 0; i < players.size(); i++) {
+		if ((players.at(i)->name == str)){
+			players.erase(players.begin() + i);
+		}
+	}
+
+}
