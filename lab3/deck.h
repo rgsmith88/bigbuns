@@ -21,6 +21,8 @@ class Deck {
 		int add_card(Card c);
 		friend void operator<< (Hand& hand, Deck& deck);
 		friend ostream& operator<< (ostream& o, const Deck& deck);
+		void getCardsFromHand(Hand& hand);
+		void getCardsFromDeck(Deck& other_deck);
 	private:
 		vector<Card> deck_vector;
 };

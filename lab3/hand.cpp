@@ -88,6 +88,37 @@ bool Hand::operator< (const Hand& other_hand) const {
 	return false;
 }
 
+Card& Hand::operator[](const size_t location) {
+	if (location >= 0 && location < hand_vector.size()) {
+		return hand_vector.at(location);
+	}
+	else {
+		throw access_out_of_bounds;
+	}
+}
+
+void Hand::remove_card(const size_t location) {
+	if (location >= hand_vector.size() || location < 0) {
+		throw erase_out_of_bounds;
+	}
+	else {
+		vector<Card> temp;
+		size_t index = 0;
+		//avoid invalidated iterators with STL erase method by copying 
+		//all values (except "location") into a new vector
+		while (index < location) {
+			temp.push_back(hand_vector.at(index));
+			index++;
+		}
+		index++;
+		while (index < hand_vector.size()) {
+			temp.push_back(hand_vector.at(index));
+			index++;
+		}
+		hand_vector = temp;
+	}
+}
+
 string Hand::asString() const {
 	string toReturn;
 	for (int i = 0; i < this->size(); ++i) {
@@ -178,7 +209,7 @@ bool poker_rank(const Hand& hand1, const Hand& hand2) {
 			return hv1cr5 > hv2cr5; //compare highest cards
 		}
 		else if (hand1_rank == 7 || hand1_rank == 6) { //four of a kind or full house
-			//compare ranks of 3rd ranking cards since those are always in 4 of a kind or full house
+													   //compare ranks of 3rd ranking cards since those are always in 4 of a kind or full house
 			return hv1cr3 > hv2cr3;
 		}
 		else if (hand1_rank == 3) { //three of a kind

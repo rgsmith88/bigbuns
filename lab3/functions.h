@@ -18,6 +18,10 @@ extern const char* enum_rank_strings[];
 
 extern const int enum_rank_ints[];
 
+card_suit getSuit(int sInt);
+
+card_rank getRank(int rInt);
+
 struct Card {
 	Card(card_suit s, card_rank r);
 	bool operator<  (const Card &) const;
@@ -39,10 +43,14 @@ enum outcome {
 	instance_not_available = 9,
 	game_already_started = 10,
 	unknown_game = 11,
-	no_game_in_progress = 12, 
+	no_game_in_progress = 12,
 	already_playing = 13,
-	nont_enough_cards = 14
+	not_enough_cards = 14,
+	access_out_of_bounds = 15,
+	erase_out_of_bounds = 16
 };
+
+Card parseString(string card_string);
 
 char* handRank(const vector<Card> & hand);
 

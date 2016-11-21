@@ -12,22 +12,18 @@ using namespace std;
 Card::Card(card_suit s, card_rank r) :
 	suit(s), rank(r) {}
 
-card_suit getSuit(char sChar) {
-	switch (sChar) {
-		case 'C': return clubs;
-		case 'c': return clubs;
-		case 'D': return diamonds;
-		case 'd': return diamonds;
-		case 'H': return hearts;
-		case 'h': return hearts;
-		case 'S': return spades;
-		case 's': return spades;
+card_suit getSuit(int sInt) {
+	switch (sInt) {
+		case 0: return clubs;
+		case 1: return diamonds;
+		case 2: return hearts;
+		case 3: return spades;
 		default: return invalidSuit;
 	}
 }
 
-card_rank getRank(char rChar) {
-	switch (rChar) {
+card_rank getRank(int rInt) {
+	switch (rInt) {
 		case 2: return two;
 		case 3: return three;
 		case 4: return four;
@@ -58,6 +54,23 @@ bool Card::operator< (const Card & card) const {
 	card_suit cs = card.suit;
 	card_rank cr = card.rank;
 	return ((enum_rank_ints[rank] < enum_rank_ints[cr]) || ((enum_rank_ints[rank] == enum_rank_ints[cr]) && (enum_suit_ints[suit] < enum_suit_ints[cs])));
+}
+
+Card parseString(string card_string) {
+	char rChar;
+	char sChar;
+	if (card_string.at(0) == '1') { //to check if rank is  10
+		rChar = '0'; //uses '0' instead of '10' because var is a char
+		sChar = card_string.at(2);
+	}
+	else {
+		rChar = card_string.at(0);
+		sChar = card_string.at(1);
+	}
+	card_suit s = getSuit(sChar);
+	card_rank r = getRank(rChar);
+	Card card = Card(s, r);
+	return card;
 }
 
 char* handRank(const vector<Card> & hand) {

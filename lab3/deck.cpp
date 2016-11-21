@@ -9,8 +9,13 @@
 #include <algorithm>
 #include <random>
 #include <chrono>
+#include <iterator>
 
 using namespace std;
+
+Deck::Deck()
+	: deck_vector()
+{}
 
 Deck::Deck(char * filename)
 	: deck_vector()
@@ -60,7 +65,8 @@ int Deck::size() const {
 }
 
 int Deck::add_card(Card c) {
-	this->deck_vector.push_back(c);
+	deck_vector.push_back(c);
+	return success;
 }
 
 ostream& operator<< (ostream& o, const Deck& deck) {
@@ -69,4 +75,9 @@ ostream& operator<< (ostream& o, const Deck& deck) {
 		o << enum_rank_strings[c.rank] << " of " << enum_suit_strings[c.suit] << endl;
 	}
 	return o;
+}
+
+void Deck::getCardsFromDeck(Deck& other_deck) {
+	std::copy(other_deck.deck_vector.begin(), other_deck.deck_vector.end(), std::back_inserter(this->deck_vector));
+	other_deck.deck_vector.erase(other_deck.deck_vector.begin(), other_deck.deck_vector.end());
 }

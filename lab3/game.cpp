@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "deck.h"
 #include "functions.h"
-#include "games.h"
+#include "game.h"
+#include "FiveCardDraw.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -14,9 +15,9 @@
 
 using namespace std;
 
-shared_ptr<GameBase> Game::ptr; //is this singular?
+shared_ptr<Game> Game::ptr; //is this singular?
 
-static shared_ptr<Game> Game::instance() {
+shared_ptr<Game> Game::instance() {
 	if (!ptr) {
 		throw instance_not_available;
 	}
@@ -24,7 +25,7 @@ static shared_ptr<Game> Game::instance() {
 	return ptr_copy;
 }
 
-static void Game::start_game(const string& str) {
+void Game::start_game(const string& str) {
 	if (ptr) {
 		throw game_already_started;
 	}
@@ -36,7 +37,7 @@ static void Game::start_game(const string& str) {
 	}
 }
 
-static void Game::stop_game() {
+void Game::stop_game() {
 	if (!ptr) {
 		throw no_game_in_progress;
 	}
@@ -45,8 +46,8 @@ static void Game::stop_game() {
 
 shared_ptr<Player> Game::find_player(const string& str) {
 	for (shared_ptr<Player> p : players) {
-		if ((*p) -> name == str) {
-			return *p;
+		if (p->name == str) {
+			return p;
 		}
 	}
 	shared_ptr<Player> not_found;
