@@ -63,12 +63,3 @@ void Game::add_player(const string& str) {
 		players.push_back(make_shared<Player>(str));
 	}
 }
-
-void Game::remove_player(const string& str) {
-	for (shared_ptr<Player> p : players) {
-		if ((*p)->name == str) {
-			players.erase(p);
-			return;
-		}
-	}
-}
