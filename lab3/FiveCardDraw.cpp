@@ -286,8 +286,8 @@ while (joinGame == true) {
 		try {
 			add_player(responseNameJoin);
 		}
-		catch(int a){
-			throw already_playing;
+		catch(already_playing){
+			cout<< "Player already added to game." << cout;
 		}
 	}	
 }
