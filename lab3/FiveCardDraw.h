@@ -17,10 +17,13 @@ protected:
 	Deck discardDeck; //under the assumption that the deck constructor initializes empty deck
 public:
 	FiveCardDraw();
-	virtual int before_turn (Player& player);
-	virtual int turn(Player& player);
-	virtual int after_turn(Player& player);
+	virtual int before_turn (Player& p);
+	virtual int turn(Player& p);
+	virtual int after_turn(Player& p);
 	virtual int before_round();
 	virtual int round();
 	virtual int after_round();
 };
+
+bool compareHand(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2);
+bool players_same_hands(shared_ptr<Player> p1, shared_ptr<Player> p2);

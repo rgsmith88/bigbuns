@@ -144,7 +144,7 @@ int handRankInt(char* handRank) {
 	if (strcmp(handRank, "One Pair") == 0) {
 		return 1;
 	}
-	return 0;
+	return 0; //No Rank
 }
 
 bool poker_rank(const Hand& hand1, const Hand& hand2) {
@@ -163,7 +163,7 @@ bool poker_rank(const Hand& hand1, const Hand& hand2) {
 	int hv2cr4 = enum_rank_ints[(hv2.at(3)).rank];
 	int hv2cr5 = enum_rank_ints[(hv2.at(4)).rank];
 	if (hand1_rank == hand2_rank) {
-		if (hand1_rank == 5 || hand1_rank == 0) {
+		if (hand1_rank == 5 || hand1_rank == 0) { //No Rank or Flush
 			for (int i = 4; i >= 0; ++i) {
 				if (hv2.at(i) < hv1.at(i)) {
 					return true;
@@ -172,7 +172,7 @@ bool poker_rank(const Hand& hand1, const Hand& hand2) {
 					return false;
 				}
 			}
-			return false;
+			return false; //NOT INTO IT RIGHT NOW
 		}
 		else if (hand1_rank == 8 || hand1_rank == 4) { //straight flush or straight
 			return hv1cr5 > hv2cr5; //compare highest cards
@@ -245,4 +245,25 @@ bool poker_rank(const Hand& hand1, const Hand& hand2) {
 		}
 	}
 	return hand1_rank > hand2_rank;
+}
+
+bool equivalent_hands(const Hand& hand1, const Hand& hand2) {
+	vector<Card> hv1 = hand1.hand_vector;
+	sort(hv1.begin(), hv1.end());
+	vector<Card> hv2 = hand2.hand_vector;
+	sort(hv2.begin(), hv2.end());
+	int hv1cr1 = enum_rank_ints[(hv1.at(0)).rank];
+	int hv1cr2 = enum_rank_ints[(hv1.at(1)).rank];
+	int hv1cr3 = enum_rank_ints[(hv1.at(2)).rank];
+	int hv1cr4 = enum_rank_ints[(hv1.at(3)).rank];
+	int hv1cr5 = enum_rank_ints[(hv1.at(4)).rank];
+	int hv2cr1 = enum_rank_ints[(hv2.at(0)).rank];
+	int hv2cr2 = enum_rank_ints[(hv2.at(1)).rank];
+	int hv2cr3 = enum_rank_ints[(hv2.at(2)).rank];
+	int hv2cr4 = enum_rank_ints[(hv2.at(3)).rank];
+	int hv2cr5 = enum_rank_ints[(hv2.at(4)).rank];
+	if (hv1cr1 != hv2cr1 || hv1cr2 != hv2cr2 || hv1cr3 != hv2cr3 || hv1cr4 != hv2cr4 || hv1cr5 != hv2cr5) {
+		return false;
+	}
+	return true;
 }
