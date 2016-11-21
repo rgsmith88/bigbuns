@@ -252,3 +252,18 @@ int FiveCardDraw::after_round() {
 
 
 }
+
+cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
+	string responseLeave;
+	cin >> responseLeave;
+	if (responseLeave == "yes" || responseLeave == "Yes") {
+		cout << "Which player wants to leave? Please enter the name of depating player." << endl;
+		string responseName;
+		cin >> responseName;
+		shared_ptr<player> player = find_player(responseName);
+		
+		if (player) {
+			//save player to ofstream. Need to define save function
+			remove_player(player->name);//remove player
+		}
+	}
