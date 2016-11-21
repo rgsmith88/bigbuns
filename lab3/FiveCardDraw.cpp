@@ -264,6 +264,15 @@ cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
 		
 		if (player) {
 			//save player to ofstream. Need to define save function
+			string fileName = player->name + ".txt";
+			ofstream playerFile(fileName, ios::trunc);
+			if (playerFile.is_open())
+			{
+				playerFile << "W"<<player->handsWon<<"\n";
+				playerFile << "L" << player->handsLost << "\n";
+				playerFile.close();
+			}
+			
 			remove_player(player->name);//remove player. Ensure remove player is defined correctly
 		}
 	}
