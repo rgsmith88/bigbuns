@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
 	}
 	catch (int e) {
 		cout << "The instance is not available" << endl;
-		myGame -> stop_game();
+		myGame_instance-> stop_game();
 		return e;
 	}
 
@@ -60,13 +60,13 @@ int main(int argc, char* argv[]) {
 	}
 
 	while (myGame_instance -> size() >= 2) { //at least two palyers in the game
-		myGame -> before_round();
-		myGame -> round();
-		myGame -> after_round();
+		myGame_instance-> before_round();
+		myGame_instance-> round();
+		myGame_instance-> after_round();
 	}
 
 	if (myGame_instance->size() == 0) {
-		myGame -> stop_game();
+		myGame_instance-> stop_game();
 		return 0;
 	}
 }
