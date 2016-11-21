@@ -23,9 +23,9 @@ int main(int argc, char* argv[]) {
 	const char* program_name = argv[0];
 	const char* game_name = argv[1];
 
-	Game myGame;
+	Game *myGame;
 	try {
-		myGame.start_game(game_name);
+		myGame -> start_game(game_name);
 	}
 	catch (int e) {
 		if (e == game_already_started) {
@@ -34,27 +34,39 @@ int main(int argc, char* argv[]) {
 		if (e == unknown_game) {
 			cout << "The game you have entered is unknown, please enter FiveCardDraw" << endl;
 		}
-		myGame.stop_game();
+		myGame -> stop_game();
 		return e;
 	}
+	shared_ptr<Game> myGame_instance;
 
 	try {
-		shared_ptr<Game> myGame_instance = myGame.instance();
+		myGame_instance = myGame -> instance();
 	}
 	catch (int e) {
 		cout << "The instance is not available" << endl;
-		myGame.stop_game();
+		myGame -> stop_game();
 		return e;
 	}
 
-	while (myGame.players.size() >= 2) { //at least two palyers in the game
-		myGame.before_round();
-		myGame.round();
-		myGame.after_round();
+	int number_of_players = argc - 2;
+	for (int i = 0; i < number_of_players; ++i) {
+		try {
+			myGame_instance->add_player(argv[i + 2]);
+		}
+		catch (int e) {
+			cout << argv[i + 2] << " is already playing this game" << endl;
+			return e;
+		}
 	}
 
-	if (players.size() == 0) {
-		myGame.stop_game();
+	while (myGame_instance -> size() >= 2) { //at least two palyers in the game
+		myGame -> before_round();
+		myGame -> round();
+		myGame -> after_round();
+	}
+
+	if (myGame_instance->size() == 0) {
+		myGame -> stop_game();
 		return 0;
 	}
 }

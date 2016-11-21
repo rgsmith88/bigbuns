@@ -64,3 +64,7 @@ void Game::add_player(const string& str) {
 		players.push_back(make_shared<Player>(str));
 	}
 }
+
+int Game::size() const {
+	return (this->players).size();
+}
