@@ -270,3 +270,21 @@ cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
 	else if (responseLeave == "no" || responseLeave == "No"){
 		return;
 	}
+
+bool joinGame = true;
+
+bool joinGame = true;
+while (joinGame) {
+	cout << "Do any players want to join the game? Please enter 'yes' or 'no'." << endl;
+	string responseJoin;
+	cin >> responseJoin;
+	if (responseJoin == "no" || responseJoin == "No") {
+		joinGame = false;
+	}
+	else if (responseJoin == "yes" || responseJoin == "Yes") {
+		cout << "Which player wants to join? Please enter the name of joining player." << endl;
+		string responseNameJoin;
+		cin >> responseNameJoin;
+		add_player(responseNameJoin);
+	}
+}
