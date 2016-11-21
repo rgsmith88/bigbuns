@@ -267,3 +267,6 @@ cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
 			remove_player(player->name);//remove player
 		}
 	}
+	else if (responseLeave == "no" || responseLeave == "No"){
+		return;
+	}
