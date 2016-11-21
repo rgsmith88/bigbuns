@@ -273,7 +273,7 @@ cout << "Do you want to leave the game? Please enter 'yes' or 'no'." << endl;
 				playerFile.close();
 			}
 			
-			remove_player(player->name);//remove player. Ensure remove player is defined correctly
+			remove_player(responseName);//remove player. Ensure remove player is defined correctly
 		}
 	}
 	else if (responseLeave == "no" || responseLeave == "No"){
