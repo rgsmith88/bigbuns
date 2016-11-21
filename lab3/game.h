@@ -30,6 +30,8 @@ class Game {
 		virtual int before_round() = 0;
 		virtual int round() = 0;
 		virtual int after_round() = 0;
+		void remove_player(const string& str);
+	
 };
 
 #endif;
