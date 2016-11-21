@@ -66,3 +66,18 @@ ostream& operator<< (ostream& o, const Deck& deck) {
 	}
 	return o;
 }
+
+//void Deck::getCardsFromHand(Hand& h) {
+//
+//	std::copy(h.hand_vector.begin(), h.cards.end(), std::back_inserter(this->cards));
+//	h.cards.erase(h.cards.begin(), h.cards.end());
+//
+//}
+//
+//
+//void Deck::getCardsFromDeck(Deck& d) {
+//
+//	std::copy(d.cards.begin(), d.cards.end(), std::back_inserter(this->cards));
+//	d.cards.erase(d.cards.begin(), d.cards.end());
+//
+//}
