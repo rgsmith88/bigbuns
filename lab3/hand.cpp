@@ -102,20 +102,21 @@ void Hand::remove_card(const size_t location) {
 		throw erase_out_of_bounds;
 	}
 	else {
-		vector<Card> temp;
-		size_t index = 0;
-		//avoid invalidated iterators with STL erase method by copying 
-		//all values (except "location") into a new vector
-		while (index < location) {
-			temp.push_back(hand_vector.at(index));
-			index++;
-		}
-		index++;
-		while (index < hand_vector.size()) {
-			temp.push_back(hand_vector.at(index));
-			index++;
-		}
-		hand_vector = temp;
+		//vector<Card> temp;
+		//size_t index = 0;
+		////avoid invalidated iterators with STL erase method by copying 
+		////all values (except "location") into a new vector
+		//while (index < location) {
+		//	temp.push_back(hand_vector.at(index));
+		//	index++;
+		//}
+		//index++;
+		//while (index < hand_vector.size()) {
+		//	temp.push_back(hand_vector.at(index));
+		//	index++;
+		//}
+		//hand_vector = temp;
+		this->hand_vector.erase(this->hand_vector.begin() + location);
 	}
 }
 

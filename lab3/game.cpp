@@ -29,7 +29,7 @@ void Game::start_game(const string& str) {
 	if (ptr) {
 		throw game_already_started;
 	}
-	else if (str.find("FiveCardDraw") < 0) { //should this be else if?
+	else if (str.find("FiveCardDraw") >= 12) { //should this be else if?
 		throw unknown_game;
 	}
 	else {
@@ -67,4 +67,12 @@ void Game::add_player(const string& str) {
 
 int Game::size() const {
 	return (this->players).size();
+}
+
+void Game::remove_player(const string& str) {
+	for (unsigned int i = 0; i < players.size(); i++) {
+		if ((players.at(i))->name == str) {
+			players.erase(players.begin() + i);
+		}
+	}
 }

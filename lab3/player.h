@@ -1,4 +1,6 @@
-#pragma once
+#ifndef player_h
+#define player_h
+
 #include "stdafx.h"
 #include "functions.h"
 #include "deck.h"
@@ -19,3 +21,5 @@ struct Player {
 };
 
 ostream& operator<< (ostream& out, const Player& p);
+
+#endif

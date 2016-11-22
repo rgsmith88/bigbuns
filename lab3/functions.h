@@ -47,7 +47,8 @@ enum outcome {
 	already_playing = 13,
 	not_enough_cards = 14,
 	access_out_of_bounds = 15,
-	erase_out_of_bounds = 16
+	erase_out_of_bounds = 16,
+	too_few_arguments = 17
 };
 
 Card parseString(string card_string);

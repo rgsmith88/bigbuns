@@ -34,14 +34,15 @@ FiveCardDraw::FiveCardDraw()
 int FiveCardDraw::before_turn(Player & p) {
 	//add implementation
 	int cardsToDiscard = 0;
+	cout << endl;
 	cout << p << endl;
-	cout << p.hand << endl;
+	cout << p.hand;
 	bool validResponse = false;
 	while (!validResponse) {
 		cout << "How many cards would you like to discard?" << endl;
 		string input;
 		cin >> input;
-		if (0 <= stoi(input) && stoi(input)<= 5) {
+		if (0 <= stoi(input) && stoi(input) <= 5) {
 			validResponse = true;
 			cardsToDiscard = stoi(input);
 		}
@@ -51,7 +52,7 @@ int FiveCardDraw::before_turn(Player & p) {
 	}
 	while (cardsToDiscard > 0) {
 		cout << "Which card index would you like to discard?" << endl;
-		cout << p.hand << endl;
+		cout << p.hand;
 		string discard;
 		cin >> discard;
 		try {
@@ -62,14 +63,14 @@ int FiveCardDraw::before_turn(Player & p) {
 		}
 		catch (int e) {
 			switch (e) {
-				case erase_out_of_bounds:
-					std::cout << "tried erasing out of bounds!" << std::endl;
-					break;
-				case access_out_of_bounds:
-					std::cout << "tried accessing out of bounds!" << std::endl;
-					break;
-				default:
-					std::cout << "try again" << std::endl;
+			case erase_out_of_bounds:
+				std::cout << "tried erasing out of bounds!" << std::endl;
+				break;
+			case access_out_of_bounds:
+				std::cout << "tried accessing out of bounds!" << std::endl;
+				break;
+			default:
+				std::cout << "try again" << std::endl;
 			}
 
 		}
@@ -83,8 +84,8 @@ int FiveCardDraw::before_turn(Player & p) {
 
 int FiveCardDraw::turn(Player& p) {
 	int cards_needed = 5 - p.hand.size();
-	cout << p << endl;
-	cout << "Cards Needed: " << cards_needed << endl;
+	//cout << endl << p;
+	//cout << "Cards Needed: " << cards_needed << endl;
 	while (cards_needed > 0) {
 		int main_deck_size = (this->main_deck).size(); //store main deck size
 		if (main_deck_size == 0) { //check if main deck is empty
@@ -101,7 +102,7 @@ int FiveCardDraw::turn(Player& p) {
 }
 
 int FiveCardDraw::after_turn(Player& p) {
-	cout << "Player Name: " << p.name << endl;
+	cout << endl << "Player Name: " << p.name << endl;
 	cout << p.hand << endl;
 	return success;
 }
@@ -130,10 +131,10 @@ int FiveCardDraw::before_round() {
 	}
 	for (size_t j = 0; j < (this->players).size(); ++j) {
 		int position = (start + j) % (this->players).size();
-		Player current_player = *(this->players).at(position);
+		//Player current_player = *(this->players).at(position);
 		//cout << "Current Player's hand: " << endl;
 		//cout << current_player.hand << endl;
-		this->before_turn(current_player);
+		this->before_turn(*players[position]);
 	}
 	return success;
 }
@@ -146,12 +147,12 @@ int FiveCardDraw::round() {
 	}
 	for (size_t j = 0; j < (this->players).size(); ++j) {
 		int position = (start + j) % (this->players).size();
-		Player current_player = *(this->players).at(position);
-		int turn_result = this->turn(current_player);
+		//Player current_player = *(this->players).at(position);
+		int turn_result = this->turn(*players[position]);
 		if (turn_result != success) {
 			return turn_result;
 		}
-		int after_turn_result = this->after_turn(current_player);
+		int after_turn_result = this->after_turn(*players[position]);
 	}
 	return success;
 }
@@ -185,31 +186,26 @@ int FiveCardDraw::after_round() {
 	for (size_t i = 0; i < temp_players.size(); i++) {
 		if (i == 0) {
 			++(temp_players.at(i)->handsWon);
-			cout << temp_players.at(i)->name << endl;
-			cout << temp_players.at(i)->handsWon << " hands won " << endl;
-			cout << temp_players.at(i)->handsLost << " hands lost " << endl;
-			cout << "current hand" << endl;
-			cout << temp_players.at(i)->hand << endl;
 		}
 		else {
 			++(temp_players[i]->handsLost);
-			cout << temp_players.at(i)->name << endl;
-			cout << temp_players.at(i)->handsWon << " hands won " << endl;
-			cout << temp_players.at(i)->handsLost << " hands lost " << endl;
-			cout << "current hand" << endl;
-			cout << temp_players.at(i)->hand << endl;
 		}
+		cout << temp_players.at(i)->name << endl;
+		cout << temp_players.at(i)->handsWon << " hands won " << endl;
+		cout << temp_players.at(i)->handsLost << " hands lost " << endl;
+		cout << "current hand" << endl;
+		cout << temp_players.at(i)->hand << endl;
 	}
 
-
 	for (size_t i = 0; i < temp_players.size(); ++i) {
-		Player current_player = *temp_players.at(i);
-		for (int j = 0; j < current_player.hand.size(); ++j) {
-			Card toMove = current_player.hand[j];
+		//Player current_player = *temp_players.at(i);
+		for (int j = (temp_players.at(i))->hand.size() - 1; j >= 0; --j) {
+			//cout << "At Player " << i << " at position " << j << endl;
+			Card toMove = (temp_players.at(i)->hand)[j];
 			(this->main_deck).add_card(toMove);
-			current_player.hand.remove_card(j);
+			(temp_players.at(i))->hand.remove_card(j);
+			//cout << " card removed " << endl;
 		}
-
 	}
 
 	main_deck.getCardsFromDeck(discardDeck);
@@ -219,7 +215,7 @@ int FiveCardDraw::after_round() {
 		string responseLeave;
 		cin >> responseLeave;
 		if (responseLeave == "yes" || responseLeave == "Yes") {
-			cout << "Which player wants to leave? Please enter the name of depating player." << endl;
+			cout << "Which player wants to leave? Please enter the name of departing player." << endl;
 			string responseName;
 			cin >> responseName;
 			shared_ptr<Player> player = find_player(responseName);
@@ -234,8 +230,10 @@ int FiveCardDraw::after_round() {
 					playerFile << "L" << player->handsLost << "\n";
 					playerFile.close();
 				}
-
 				remove_player(responseName);//remove player. Ensure remove player is defined correctly
+			}
+			else {
+				cout << "That player is not currently at the table" << endl;
 			}
 		}
 		else if (responseLeave == "no" || responseLeave == "No") {

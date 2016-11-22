@@ -1,3 +1,6 @@
+#ifndef FiveCardDraw_h
+#define FiveCardDraw_h
+
 #include "stdafx.h"
 #include "functions.h"
 #include "deck.h"
@@ -17,7 +20,7 @@ protected:
 	Deck discardDeck; //under the assumption that the deck constructor initializes empty deck
 public:
 	FiveCardDraw();
-	virtual int before_turn (Player& p);
+	virtual int before_turn(Player& p);
 	virtual int turn(Player& p);
 	virtual int after_turn(Player& p);
 	virtual int before_round();
@@ -27,3 +30,5 @@ public:
 
 bool compareHand(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2);
 bool players_same_hands(shared_ptr<Player> p1, shared_ptr<Player> p2);
+
+#endif
