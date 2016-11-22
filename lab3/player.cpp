@@ -14,6 +14,7 @@ Player::Player(std::string n) {
 	name = n;
 	handsWon = 0;
 	handsLost = 0;
+	hand = Hand();
 	string fileName = n + ".txt";
 
 	string line;
@@ -49,7 +50,8 @@ Player::Player(std::string n) {
 
 	}
 }
+
 ostream& operator<< (ostream& out, const Player& p) {
-	out << p.name << " games won: " << p.handsWon << " games_lost " << p.handsLost;
+	out << "Player: " << p.name << " Wins: " << p.handsWon << " Losses: " << p.handsLost;
 	return out;
 }

@@ -24,22 +24,24 @@ FiveCardDraw::FiveCardDraw()
 			card_rank c_rank = getRank(i);
 			card_suit c_suit = getSuit(j);
 			Card c = Card(c_suit, c_rank);
+			//cout << enum_rank_strings[c_rank] << enum_suit_strings[c_suit] << endl;
 			(this->main_deck).add_card(c);
 		}
 	}
+	//cout << main_deck << endl;
 }
 
 int FiveCardDraw::before_turn(Player & p) {
 	//add implementation
 	int cardsToDiscard = 0;
-	cout << "player: " << p.name << "wins: " << p.handsWon << "losses: " << p.handsLost << endl;
+	cout << p << endl;
 	cout << p.hand << endl;
 	bool validResponse = false;
 	while (!validResponse) {
 		cout << "How many cards would you like to discard?" << endl;
 		string input;
 		cin >> input;
-		if (0 <= stoi(input) && stoi(input)< 5) {
+		if (0 <= stoi(input) && stoi(input)<= 5) {
 			validResponse = true;
 			cardsToDiscard = stoi(input);
 		}
@@ -47,7 +49,6 @@ int FiveCardDraw::before_turn(Player & p) {
 			cout << "enter a number from 0 to 5" << endl;
 		}
 	}
-
 	while (cardsToDiscard > 0) {
 		cout << "Which card index would you like to discard?" << endl;
 		cout << p.hand << endl;
@@ -61,14 +62,14 @@ int FiveCardDraw::before_turn(Player & p) {
 		}
 		catch (int e) {
 			switch (e) {
-			case erase_out_of_bounds:
-				std::cout << "tried erasing out of bounds!" << std::endl;
-				break;
-			case access_out_of_bounds:
-				std::cout << "tried accessing out of bounds!" << std::endl;
-				break;
-			default:
-				std::cout << "try again" << std::endl;
+				case erase_out_of_bounds:
+					std::cout << "tried erasing out of bounds!" << std::endl;
+					break;
+				case access_out_of_bounds:
+					std::cout << "tried accessing out of bounds!" << std::endl;
+					break;
+				default:
+					std::cout << "try again" << std::endl;
 			}
 
 		}
@@ -82,6 +83,8 @@ int FiveCardDraw::before_turn(Player & p) {
 
 int FiveCardDraw::turn(Player& p) {
 	int cards_needed = 5 - p.hand.size();
+	cout << p << endl;
+	cout << "Cards Needed: " << cards_needed << endl;
 	while (cards_needed > 0) {
 		int main_deck_size = (this->main_deck).size(); //store main deck size
 		if (main_deck_size == 0) { //check if main deck is empty
@@ -105,21 +108,31 @@ int FiveCardDraw::after_turn(Player& p) {
 
 int FiveCardDraw::before_round() {
 	(this->main_deck).shuffle(); //shuffle main deck
+	//cout << main_deck << endl;
 	int start = (this->dealer) + 1;
+	//cout << "dealer is: " << dealer << endl;
 	int num_players = (this->players).size();
 	if ((this->dealer) == num_players - 1) {
 		start = 0;
 	}
+	//cout << "start is: " << start << endl;
 	for (int i = 0; i < 5; ++i) {
+		//cout << "i: " << i << endl;
 		for (size_t j = 0; j < (this->players).size(); ++j) {
 			int position = (start + j) % (this->players).size();
-			Player current_player = *(this->players).at(position);
-			current_player.hand << (this->main_deck);
+			//cout << "Position: " << position << endl;
+			//Player current_player = *(this->players).at(position);
+			players[position]->hand << (this->main_deck);
+			//current_player.hand << (this->main_deck);
+			//cout << "Current Player's hand: " << endl;
+			//cout << players[position]->hand << endl;
 		}
 	}
 	for (size_t j = 0; j < (this->players).size(); ++j) {
 		int position = (start + j) % (this->players).size();
 		Player current_player = *(this->players).at(position);
+		//cout << "Current Player's hand: " << endl;
+		//cout << current_player.hand << endl;
 		this->before_turn(current_player);
 	}
 	return success;

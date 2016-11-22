@@ -16,7 +16,6 @@ struct Player {
 	unsigned int handsWon;
 	unsigned int handsLost;
 	Player(std::string n);
-
 };
 
 ostream& operator<< (ostream& out, const Player& p);
