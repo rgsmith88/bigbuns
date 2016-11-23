@@ -253,14 +253,27 @@ int FiveCardDraw::after_round() {
 			string responseNameJoin;
 			cin >> responseNameJoin;
 			try {
+				cout << "trying to add" << endl;
 				add_player(responseNameJoin);
+				cout << "worked?" << endl;
 			}
 			catch (int e) {
-				if (e = already_playing) {
-					cout << "Player already added to game." << endl;
+				cout << "exception caught" << endl;
+				if (e == already_playing) {
+				//if (e == 25) {
+					cout << "didn't work" << endl;
+					cout << "Player already in game." << endl;
 				}
+			}
+			catch (exception& e) {
+				cout << "something caught" << endl;
+				cout << e.what() << endl;
+			}
+			catch (shared_ptr<Player>) {
+				cout << "LAST RESORT!" << endl;
 			}
 		}
 	}
-	return 0;
+	dealer = (dealer + 1) % players.size();
+	return success;
 }

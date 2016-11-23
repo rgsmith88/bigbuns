@@ -60,9 +60,7 @@ int main(int argc, char* argv[]) {
 
 	int number_of_players = argc - 2;
 
-	cout << "Num players: " << number_of_players << endl;
 	for (int i = 0; i < number_of_players; ++i) {
-		cout << "i is: " << i << endl;
 		try {
 			myGame_instance->add_player(argv[i + 2]);
 			cout << "Player added!" << endl;
@@ -73,8 +71,6 @@ int main(int argc, char* argv[]) {
 			return e;
 		}
 	}
-
-	cout << "Size is: " << myGame_instance->size() << endl;
 
 	while (myGame_instance -> size() >= 2) { //at least two palyers in the game
 		myGame_instance-> before_round();

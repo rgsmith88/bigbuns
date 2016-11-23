@@ -39,7 +39,6 @@ enum outcome {
 	just_shuffle = 6,
 	need_shuffle = 7,
 	too_many_arguments = 8,
-
 	instance_not_available = 9,
 	game_already_started = 10,
 	unknown_game = 11,
