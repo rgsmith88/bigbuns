@@ -23,31 +23,29 @@ Player::Player(std::string n) {
 	bool lExtracted = false;
 
 
-	if (ifs.is_open())
-	{
-		while (getline(ifs, line))
-		{
-			for (unsigned int i = 0; i <= line.length(); i++)
-			{
-				char p = line.at(i);
-				if (p == 'W')
-				{
-					handsWon = line.at(i + 1);
-					wExtracted = true;
-
-				}
-				else if (p == 'L')
-				{
-					handsLost = line.at(i + 1);
+	if (ifs.is_open()) {
+		while (getline(ifs, line)) {
+			char p = line.at(0);
+			string number = "";
+			if (line.length() > 1) {
+				for (unsigned int i = 1; i < line.length(); i++) {
+					char temp_num = line.at(i);
+					number = number + temp_num;
 				}
 			}
+			if (p == 'W') {
+				handsWon = stoi(number);
+				wExtracted = true;
+			}
+			else if (p == 'L') {
+				handsLost = stoi(number);
+				lExtracted = true;
+			}
 		}
-		if (!wExtracted || !lExtracted)
-		{
+		if (!wExtracted || !lExtracted) {
 			handsWon = 0;
 			handsLost = 0;
 		}
-
 	}
 }
 

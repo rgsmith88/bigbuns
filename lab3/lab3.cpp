@@ -13,7 +13,6 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-
 	if (argc < 4) { //program needs at least 3 inputs
 		const char* message = "Please pass the name of a game followed by the names of two or more players";
 		int usageError = usageMessage(argv[0], message); // program should call the usage message function
@@ -27,11 +26,9 @@ int main(int argc, char* argv[]) {
 
 	Game *myGame;
 	try {
-		cout << "tried" << endl;
 		myGame -> start_game(game_name);
 	}
-	catch (int e) {
-		cout << "start caught?" << endl;
+	catch (outcome e) {
 		if (e != success) {
 			if (e == game_already_started) {
 				cout << "The game has already started" << endl;
@@ -43,20 +40,17 @@ int main(int argc, char* argv[]) {
 			return e;
 		}
 	}
-	cout << "WE IN HERE!" << endl;
 
 	shared_ptr<Game> myGame_instance;
 
 	try {
 		myGame_instance = myGame -> instance();
 	}
-	catch (int e) {
+	catch (outcome e) {
 		cout << "The instance is not available" << endl;
 		myGame_instance-> stop_game();
 		return e;
 	}
-
-	cout << "WE OUT HERE!" << endl;
 
 	int number_of_players = argc - 2;
 
@@ -66,7 +60,6 @@ int main(int argc, char* argv[]) {
 			cout << "Player added!" << endl;
 		}
 		catch (int e) {
-			cout << "caught" << endl;
 			cout << argv[i + 2] << " is already playing this game" << endl;
 			return e;
 		}
@@ -78,8 +71,13 @@ int main(int argc, char* argv[]) {
 		myGame_instance-> after_round();
 	}
 
-	if (myGame_instance->size() == 0) {
-		myGame_instance-> stop_game();
-		return 0;
+	if (myGame_instance->size() == 1) {
+		cout << "Only one player left, and no one wants to join, so sayonora buddy! Game over! TTFN ;)" << endl;
 	}
+	else {
+		cout << "No players left! Game Over!" << endl;
+	}
+
+	myGame_instance-> stop_game();
+	return success;
 }

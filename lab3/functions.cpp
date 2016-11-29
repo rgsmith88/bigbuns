@@ -174,6 +174,7 @@ int printHand(const vector<Card> & cards) {
 }
 
 int printCards(const vector<Card> & cards) {
+	cout << "Try Print" << endl;
 	try {
 		for (Card c : cards) {
 			//use enum_rank_strings so that enum text is printed instead of enum numbers
@@ -190,6 +191,5 @@ int printCards(const vector<Card> & cards) {
 int usageMessage(const char* programName, const char * usageMessage) {
 	// print out a helpful usage message telling the user how to run the program correctly
 	cout << usageMessage << endl;
-	//cout << "In order to use the program type in two arguments when using the method like in this: usage: lab0 card_file.txt" << endl;
 	return usage_error;
 }

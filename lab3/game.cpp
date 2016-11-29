@@ -15,7 +15,7 @@
 
 using namespace std;
 
-shared_ptr<Game> Game::ptr; //is this singular?
+shared_ptr<Game> Game::ptr;
 
 shared_ptr<Game> Game::instance() {
 	if (!ptr) {
@@ -52,21 +52,15 @@ shared_ptr<Player> Game::find_player(const string& str) {
 	}
 	shared_ptr<Player> not_found;
 	return not_found;
-
 }
 
 void Game::add_player(const string& str) {
 	shared_ptr<Player> player_found = find_player(str);
 	if (player_found) {
-		cout << "already playing" << endl;
 		throw already_playing;
-		//throw 25;
-		cout << "exception thrown" << endl;
 	}
 	else {
-		cout << "Pushing back " << str << endl;
 		players.push_back(make_shared<Player>(str));
-		cout << "Error already occurred??" << endl;
 	}
 }
 
@@ -75,7 +69,6 @@ int Game::size() const {
 }
 
 void Game::remove_player(const string& str) {
-	//for (unsigned int i = 0; i < players.size(); i++) {
 	for (std::vector<std::shared_ptr<Player>>::iterator i = players.begin(); i != players.end(); ++i) {
 		if ((*i)->name == str) {
 			players.erase(i);
