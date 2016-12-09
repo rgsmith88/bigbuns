@@ -18,6 +18,9 @@ class FiveCardDraw : public Game {
 protected:
 	size_t dealer; //start at 0
 	Deck discardDeck; //under the assumption that the deck constructor initializes empty deck
+	int commonChipPot; //NEW: we were not specifically asked to make it protected/member variable but i think this is the best thing to do
+	unsigned int current_bet; //NEW: this will record the current bet for the phase
+
 public:
 	FiveCardDraw();
 	virtual int before_turn(Player& p);
@@ -26,6 +29,7 @@ public:
 	virtual int before_round();
 	virtual int round();
 	virtual int after_round();
+	virtual void betting_phase(Player& p);
 };
 
 bool compareHand(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2);
