@@ -38,151 +38,150 @@ FiveCardDraw::FiveCardDraw()
 
 //NEW: BETTING PHASE
 void FiveCardDraw:: betting_phase(Player &p) {
-	bool bet_on_table = false;
+	bool bet_on_table = false; //TEMP
 	bool validResponse_CB = false;
 	bool validResponse_FCR = false;
-	bool playerDone = false;
+	//bool playerDone = false;
 
 	if (!bet_on_table) { // players may either check or bet 1-2 chips
 		while (!validResponse_CB) {
 			cout << "Would you like to 'check' or 'bet'?" << endl;
-			string CheckOrBet;
-			cin >> CheckOrBet;
-			if (CheckOrBet == "check") {
+			string checkOrBet;
+			cin >> checkOrBet;
+			if (checkOrBet == "check" || checkOrBet == "Check") {
 				validResponse_CB = true;
-				playerDone = true;
+				//playerDone = true;
+				//return;
 			}
-			else if (CheckOrBet == "bet") {
+			else if (checkOrBet == "bet" || checkOrBet == "Bet") {
 				validResponse_CB = true;
 				bool validBet = false;
 				while (!validBet) {
 					cout << "Would you like to bet '1' or '2' chips?" << endl;
 					string betAmount;
 					cin >> betAmount;
-					if (stoi(betAmount) == 1 || stoi(betAmount) == 2) {
-						if (stoi(betAmount) == 1) {
-							if (p.chips < 1) {
-								cout << "less than one chip. You must check and are going to check right now" << endl;
-								//validBet == false;
-								playerDone = true;
-							}
-							else {
-								validBet == true;
-								++commonChipPot;
-								++p.chips_bet;
-								--p.chips;
-								bet_on_table = true;
-								++current_bet;
-							}
-
+					if (stoi(betAmount) == 1) {
+						if (p.chips == 0) {
+							cout << "Less than one chip. You must check and are going to check right now" << endl;
+							//validBet == false;
+							//playerDone = true;
+							return;
 						}
-						else { //they waged a bet of 2
-							if (p.chips < 2) { //if they have less than 2 chips they cant bet 2 chips so they must either bet one or check
-								if (p.chips < 1) { //player doesn't have any chips so they must check
-									cout << "less than one chip. You must check and are going to check right now" << endl;
-									//validBet == false;
-									playerDone = true;
-								}
-								else { //the player has exactly one chip so we will say invalid bet which will prompt them again to bet or check
-									cout << "you only have one chip so you cannot bet 2" << endl;
-									validBet = false;
-								}
-							}
-							else { //the player has 2 or more chips so they can bet 2 chips
-								validBet = true;
-								commonChipPot += 2;
-								p.chips_bet += 2;
-								p.chips -= 2;
-								bet_on_table = true;
-								current_bet += 2;
-							}
+						else {
+							validBet == true;
+							--p.chips; //take chip from player's chips
+							++commonChipPot; //add that chip to POT
+							++p.chips_bet; //to keep track of how many chips were bet
+
+							bet_on_table = true; //WILL MATTER WHEN WE MAKE GLOBAL ?!?!?! XD
+							++current_bet;
+						}
+
+					}
+					else if(stoi(betAmount) == 2) { //they waged a bet of 2
+						if (p.chips == 0) { //player doesn't have any chips so they must check
+							cout << "Less than one chip. You must check and are going to check right now" << endl;
+							//validBet = false;
+							//playerDone = true;
+							//p.checked = true; //????
+							return;
+						}
+						else if (p.chips == 1){ //the player has exactly one chip so we will say invalid bet which will prompt them again to bet or check
+							cout << "You only have one chip so you cannot bet 2" << endl;
+							//validBet = false;
+						}
+						else { //the player has 2 or more chips so they can bet 2 chips
+							validBet = true;
+							p.chips -= 2; //takes 2 chips from player
+							commonChipPot += 2; //adds those chips to chipPotle
+							p.chips_bet += 2; //keep track of current chips bet in round
+							bet_on_table = true;
+							current_bet += 2;
 						}
 					}
-
-					else { // the user entered a bet amount other than 1 or 2 so its invalid
-						cout << "invalid bet amount" << endl;
-						validBet = false;
+					else { // the user entered a bet amount other than '1' or '2' so it's invalid
+						cout << "Invalid Bet Amount" << endl;
+						//validBet = false;
 					}
-
 				}
-
 			}
 			else {
 				cout << "invalid response!" << endl;
-				validResponse_CB = false;
+				//validResponse_CB = false;
 			}
 		}
 	}
 	else { //There is a bet placed on the table so the player can either FOLD, CALL, or RAISE
 		while (!validResponse_FCR) {
-
-			cout << "Would you like to 'fold' 'call' or 'raise'?" << endl;
+			cout << "Would you like to 'fold', 'call', or 'raise'?" << endl;
 			string FoldCallOrRaise;
 			cin >> FoldCallOrRaise;
-			if (FoldCallOrRaise == "fold") {
+			if (FoldCallOrRaise == "fold" || FoldCallOrRaise == "Fold") {
 				validResponse_FCR = true;
-				playerDone = true;
+				//playerDone = true;
 				//commonChipPot += p.chips_bet;
+				//p.folded = true; //????
+				return;
 			}
-			else if (FoldCallOrRaise == "call") {
+			else if (FoldCallOrRaise == "call" || FoldCallOrRaise == "Call") {
 				validResponse_FCR = true;
 				//check if player has enough money
-				if(p.chips < current_bet - p.chips_bet) {
+				int call_amount = current_bet - p.chips_bet;
+				if(p.chips < call_amount) {
 					commonChipPot += p.chips;
 					p.chips_bet += p.chips;
 					p.chips = 0; //dangerous move here hard coding it to zero my b guys. CHECK ME OUT WHEN DEBUGGING
 					std::cout << "You don't have enough money to call, you're going ALL IN" << std::endl;
-					playerDone = true;
+					//playerDone = true;
+					return;
 				}
-				else if (p.chips == current_bet - p.chips_bet) { //player has same amount of chips as current bet
-					commonChipPot += p.chips;
-					p.chips_bet += current_bet;
-					p.chips -= current_bet; //this should be zero as they will have bet the last of their chips
+				else if (p.chips == call_amount) { //player has same amount of chips as current bet
+					commonChipPot += call_amount;
+					p.chips_bet += call_amount;
+					p.chips -= call_amount; //this should be zero as they will have bet the last of their chips
+					cout << "You're going ALL IN BUDDY!" << endl;
 				}
 				else { //They have more money than current bet
-					commonChipPot += current_bet;
-					p.chips -= current_bet;
-					p.chips_bet += current_bet;
-
+					commonChipPot += call_amount;
+					p.chips -= call_amount;
+					p.chips_bet += call_amount;
 				}
 			}
-			else if (FoldCallOrRaise == "raise") {
+			else if (FoldCallOrRaise == "raise" || FoldCallOrRaise == "Raise") {
 				if (p.chips <= current_bet - p.chips_bet) { //If the player doesnt have more than the current bet they cannot raise
-					cout << "Sorry you actually dont have enough chips to raise--fold or call" << endl;
-					validResponse_FCR = false;
+					cout << "Sorry you actually don't have enough chips to raise-- either fold or call" << endl;
+					//validResponse_FCR = false;
+				}
+				else if (p.chips == current_bet - p.chips_bet + 1) { //in this case the player can only raise by one
+					cout << "You can only raise by 1 chip...raising by one chip" << endl;
+					--p.chips; //take chip from p.chips
+					++commonChipPot; //add it to commonChipotle
+					++p.chips_bet;
+					++current_bet;
+					validResponse_FCR = true;
 				}
 				else {
-					validResponse_FCR = true;
-					if (p.chips == current_bet - p.chips_bet - 1) { //in this case the player can only raise by one
-						cout << "You can only raise by 1 chip...raising by one chip" << endl;
-						commonChipPot += 1;
-						--p.chips;
-						p.chips_bet += 1;
+					cout << "How many chips would you like to raise? '1' or '2'?" << endl;
+					string raiseAmount;
+					cin >> raiseAmount;
+					if (stoi(raiseAmount) == 1) {
+						--p.chips; //take chip from player's chips
+						++commonChipPot; //add that chip to potle
+						++p.chips_bet;
+						++current_bet;
+						validResponse_FCR = true;
 					}
-
+					else if (stoi(raiseAmount) == 2) {
+						p.chips -= 2; //take 2 chips from player's chips
+						commonChipPot += 2; //add them to chipPotle
+						p.chips_bet += 2;
+						current_bet += 2;
+						validResponse_FCR = true;
+					}
 					else {
-						cout << "how many chips would you like to raise? '1' or '2'?" << endl;
-						string raiseAmount;
-						cin >> raiseAmount;
-						if (stoi(raiseAmount) == 1 || stoi(raiseAmount) == 2) {
-							validResponse_FCR = true;
-							if (stoi(raiseAmount) == 1) {
-								commonChipPot += 1;
-								--p.chips;
-								p.chips_bet += 1;
-							}
-							else if (stoi(raiseAmount) == 2) {
-								commonChipPot += 2;
-								p.chips-=2;
-								p.chips_bet += 2;
-							}
-							else {
-								cout << "invalid response. Raise by a value of '1' or '2'" << endl;
-								validResponse_FCR = false;
-							}
-						}
+						cout << "invalid response. Raise by a value of '1' or '2'" << endl;
+						//validResponse_FCR = false;
 					}
-
 				}
 			}
 			else {

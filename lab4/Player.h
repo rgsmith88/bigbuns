@@ -19,7 +19,7 @@ struct Player {
 	unsigned int handsLost;
 	unsigned int chips; //NEW
 	unsigned int chips_bet; //NEW: this records the chips bet by a player in the current phase
-
+	string move;
 	Player(std::string n);
 };
 
