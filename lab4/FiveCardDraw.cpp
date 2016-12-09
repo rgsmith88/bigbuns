@@ -37,19 +37,24 @@ FiveCardDraw::FiveCardDraw()
 //}
 
 //NEW: BETTING PHASE
-void FiveCardDraw:: betting_phase(Player &p) {
+void FiveCardDraw::betting_phase(Player &p) {
 	bool bet_on_table = false; //TEMP
 	bool validResponse_CB = false;
 	bool validResponse_FCR = false;
 	//bool playerDone = false;
 
-	if (!bet_on_table) { // players may either check or bet 1-2 chips
+	if (p.chips == 0) {
+		cout << "This player has no more chips, let em be let em be, let em be let em be sing a song of freedom let em be bum bum bum" << endl;
+		p.move = "no money pls";
+	}
+	else if (!bet_on_table) { // players may either check or bet 1-2 chips
 		while (!validResponse_CB) {
 			cout << "Would you like to 'check' or 'bet'?" << endl;
 			string checkOrBet;
 			cin >> checkOrBet;
 			if (checkOrBet == "check" || checkOrBet == "Check") {
 				validResponse_CB = true;
+				p.move = "check";
 				//playerDone = true;
 				//return;
 			}
@@ -61,37 +66,23 @@ void FiveCardDraw:: betting_phase(Player &p) {
 					string betAmount;
 					cin >> betAmount;
 					if (stoi(betAmount) == 1) {
-						if (p.chips == 0) {
-							cout << "Less than one chip. You must check and are going to check right now" << endl;
-							//validBet == false;
-							//playerDone = true;
-							return;
-						}
-						else {
-							validBet == true;
-							--p.chips; //take chip from player's chips
-							++commonChipPot; //add that chip to POT
-							++p.chips_bet; //to keep track of how many chips were bet
+						validBet = true;
+						p.move = "bet";
+						--p.chips; //take chip from player's chips
+						++commonChipPot; //add that chip to POT
+						++p.chips_bet; //to keep track of how many chips were bet
 
-							bet_on_table = true; //WILL MATTER WHEN WE MAKE GLOBAL ?!?!?! XD
-							++current_bet;
-						}
-
+						bet_on_table = true; //WILL MATTER WHEN WE MAKE GLOBAL ?!?!?! XD
+						++current_bet;
 					}
-					else if(stoi(betAmount) == 2) { //they waged a bet of 2
-						if (p.chips == 0) { //player doesn't have any chips so they must check
-							cout << "Less than one chip. You must check and are going to check right now" << endl;
-							//validBet = false;
-							//playerDone = true;
-							//p.checked = true; //????
-							return;
-						}
-						else if (p.chips == 1){ //the player has exactly one chip so we will say invalid bet which will prompt them again to bet or check
+					else if (stoi(betAmount) == 2) { //they waged a bet of 2
+						if (p.chips == 1) { //the player has exactly one chip so we will say invalid bet which will prompt them again to bet or check
 							cout << "You only have one chip so you cannot bet 2" << endl;
 							//validBet = false;
 						}
 						else { //the player has 2 or more chips so they can bet 2 chips
 							validBet = true;
+							p.move = "bet";
 							p.chips -= 2; //takes 2 chips from player
 							commonChipPot += 2; //adds those chips to chipPotle
 							p.chips_bet += 2; //keep track of current chips bet in round
@@ -118,6 +109,7 @@ void FiveCardDraw:: betting_phase(Player &p) {
 			cin >> FoldCallOrRaise;
 			if (FoldCallOrRaise == "fold" || FoldCallOrRaise == "Fold") {
 				validResponse_FCR = true;
+				p.move = "fold";
 				//playerDone = true;
 				//commonChipPot += p.chips_bet;
 				//p.folded = true; //????
@@ -125,9 +117,10 @@ void FiveCardDraw:: betting_phase(Player &p) {
 			}
 			else if (FoldCallOrRaise == "call" || FoldCallOrRaise == "Call") {
 				validResponse_FCR = true;
+				p.move = "call";
 				//check if player has enough money
-				int call_amount = current_bet - p.chips_bet;
-				if(p.chips < call_amount) {
+				unsigned int call_amount = current_bet - p.chips_bet;
+				if (p.chips < call_amount) {
 					commonChipPot += p.chips;
 					p.chips_bet += p.chips;
 					p.chips = 0; //dangerous move here hard coding it to zero my b guys. CHECK ME OUT WHEN DEBUGGING
@@ -159,6 +152,7 @@ void FiveCardDraw:: betting_phase(Player &p) {
 					++p.chips_bet;
 					++current_bet;
 					validResponse_FCR = true;
+					p.move = "raise";
 				}
 				else {
 					cout << "How many chips would you like to raise? '1' or '2'?" << endl;
@@ -170,6 +164,7 @@ void FiveCardDraw:: betting_phase(Player &p) {
 						++p.chips_bet;
 						++current_bet;
 						validResponse_FCR = true;
+						p.move = "raise";
 					}
 					else if (stoi(raiseAmount) == 2) {
 						p.chips -= 2; //take 2 chips from player's chips
@@ -177,6 +172,7 @@ void FiveCardDraw:: betting_phase(Player &p) {
 						p.chips_bet += 2;
 						current_bet += 2;
 						validResponse_FCR = true;
+						p.move = "raise";
 					}
 					else {
 						cout << "invalid response. Raise by a value of '1' or '2'" << endl;
@@ -189,9 +185,52 @@ void FiveCardDraw:: betting_phase(Player &p) {
 				validResponse_FCR = false;
 			}
 		}
+	}
+}
 
+void FiveCardDraw::betting_round() {
+	int start = (this->dealer) + 1;
+	int num_players = (this->players).size();
+	if ((this->dealer) == num_players - 1) {
+		start = 0;
+	}
+	//for (size_t j = 0; j < (this->players).size(); ++j) {
+	size_t j = 0;
+	size_t last_to_raise = -1; //to keep track of index of last person who raised
+	int number_folded = 0;
+	bool round_over = false;
+	while (!round_over) {
+		int position = (start + j) % (this->players).size();
+		if (number_folded == num_players - 1) { //if everyone folded
+			players.at(position)->chips += commonChipPot; //award them entire pot
+			++players.at(position)->handsWon; //increment win count
+			round_over = true; //end round
+		}
+		if (position == last_to_raise) { //if everyone called;
+			round_over = true;
+		}
+		//if everyone checked
+		if (last_to_raise == -1 && position == ((start) % (this->players).size()) && players.at(position)->move == "checked") {
+			round_over = true;
+		}
+		else if (players.at(position)->move != "fold") {
+			betting_phase(*players.at(position));
+			string player_move = players.at(position)->move;
+			if (player_move == "bet" || player_move == "raised") {
+				last_to_raise = position;
+			}
+			if (player_move == "fold") {
+				++number_folded;
 
-
+			}
+		}
+		++j;
+	}
+	//clear p.move for all p if they didnt fold
+	for (size_t i = 0; i < players.size(); ++i) {
+		if (players.at(i)->move != "fold") {
+			players.at(i)->move = "";
+		}
 	}
 }
 
@@ -290,9 +329,10 @@ int FiveCardDraw::after_turn(Player& p) {
 
 int FiveCardDraw::before_round() {
 
-	for (int i = 0; i < players.size; ++i) { //New: remove chip from each player before round and add to common chip pot
+	for (size_t i = 0; i < players.size(); ++i) { //New: remove chip from each player before round and add to common chip pot
 		--players.at(i)->chips;
 		++commonChipPot;
+		players.at(i)->move = "";
 	}
 
 	(this->main_deck).shuffle(); //shuffle main deck
@@ -320,6 +360,7 @@ int FiveCardDraw::round() {
 	if ((this->dealer) == num_players - 1) {
 		start = 0;
 	}
+	betting_round();
 	for (size_t j = 0; j < (this->players).size(); ++j) {
 		int position = (start + j) % (this->players).size();
 		int turn_result = this->turn(*players[position]);
@@ -328,6 +369,7 @@ int FiveCardDraw::round() {
 		}
 		int after_turn_result = this->after_turn(*players[position]);
 	}
+	betting_round();
 	return success;
 }
 
@@ -358,17 +400,31 @@ int FiveCardDraw::after_round() {
 	std::sort(temp_players.begin(), temp_players.end(), compareHand);
 
 	for (size_t i = 0; i < temp_players.size(); i++) {
-		if (i == 0) {
-			++(temp_players.at(i)->handsWon);
+		if (players.at(i)->move != "fold") {
+			if (i == 0) {
+				++(temp_players.at(i)->handsWon);
+			}
+			else {
+				++(temp_players[i]->handsLost);
+			}
+			cout << temp_players.at(i)->name << endl;
+			cout << temp_players.at(i)->handsWon << " hands won" << endl;
+			cout << temp_players.at(i)->handsLost << " hands lost" << endl;
+			cout << temp_players.at(i)->chips << " chips" << endl;
+			cout << "current hand" << endl;
+			cout << temp_players.at(i)->hand << endl;
 		}
-		else {
+	}
+	for (size_t i = 0; i < temp_players.size(); i++) {
+		if (players.at(i)->move == "fold") {
 			++(temp_players[i]->handsLost);
+			cout << temp_players.at(i)->name << endl;
+			cout << temp_players.at(i)->handsWon << " hands won" << endl;
+			cout << temp_players.at(i)->handsLost << " hands lost" << endl;
+			cout << temp_players.at(i)->chips << " chips" << endl;
+			cout << "current hand" << endl;
+			cout << temp_players.at(i)->hand << endl;
 		}
-		cout << temp_players.at(i)->name << endl;
-		cout << temp_players.at(i)->handsWon << " hands won " << endl;
-		cout << temp_players.at(i)->handsLost << " hands lost " << endl;
-		cout << "current hand" << endl;
-		cout << temp_players.at(i)->hand << endl;
 	}
 
 	for (size_t i = 0; i < temp_players.size(); ++i) {

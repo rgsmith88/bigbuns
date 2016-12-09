@@ -16,6 +16,7 @@ Player::Player(std::string n) {
 	handsLost = 0;
 	chips = 20; //NEW
 	chips_bet = 0; //NEW: this is chips bet by the player in the round
+	move = "";
 	hand = Hand();
 	string fileName = n + ".txt";
 
