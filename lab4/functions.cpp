@@ -10,7 +10,7 @@
 using namespace std;
 
 Card::Card(card_suit s, card_rank r) :
-	suit(s), rank(r) {}
+	suit(s), rank(r), faceDown(false) {}
 
 card_suit getSuit(int sInt) {
 	switch (sInt) {

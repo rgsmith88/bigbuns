@@ -26,7 +26,6 @@ Hand::Hand(const Hand& hand)
 	}
 }
 
-
 int Hand::operator= (const Hand& other_hand) {
 	if (&other_hand != this) {
 		vector<Card> temp_vector;
@@ -44,7 +43,7 @@ int Hand::size() const {
 }
 
 bool Hand::operator== (const Hand& other_hand) const {
-	if (this->size() != other_hand.size()) { 
+	if (this->size() != other_hand.size()) {
 		return false;
 	}
 	bool same = true;
@@ -112,8 +111,13 @@ string Hand::asString() const {
 		if (i != 0) {
 			toReturn += " ";
 		}
-		toReturn += enum_rank_strings[c.rank];
-		toReturn += enum_suit_strings[c.suit];
+		//if (c.faceDown) { //IF THE CARD IS FACE DOWN THEN WE PRINT A *
+		//	toReturn += "*";
+		//}
+		//else {
+			toReturn += enum_rank_strings[c.rank];
+			toReturn += enum_suit_strings[c.suit];
+		//}
 	}
 	return toReturn;
 }
@@ -189,7 +193,7 @@ bool poker_rank(const Hand& hand1, const Hand& hand2) {
 					return false;
 				}
 			}
-			return false; 
+			return false;
 		}
 		else if (hand1_rank == 8 || hand1_rank == 4) { //straight flush or straight
 			return hv1cr5 > hv2cr5; //compare highest cards
@@ -283,4 +287,63 @@ bool equivalent_hands(const Hand& hand1, const Hand& hand2) {
 		return false;
 	}
 	return true;
+}
+
+//THIS IS MADE FOR SEVEN CARD STUD 
+Hand Hand::sevenChooseFive() {
+	Hand best_hand;
+	for (int i = 0; i < 6; ++i) {
+		for (int j = i + 1; j < 7; ++j) {
+			int card_index1 = 0;
+			if (card_index1 == i) {
+				++card_index1;
+				if (card_index1 == j) {
+					++card_index1;
+				}
+			}
+			int card_index2 = card_index1 + 1;
+			if (card_index2 == i) {
+				++card_index2;
+				if (card_index2 == j) {
+					++card_index2;
+				}
+			}
+			int card_index3 = card_index2 + 1;
+			if (card_index3 == i) {
+				++card_index3;
+				if (card_index3 == j) {
+					++card_index3;
+				}
+			}
+			int card_index4 = card_index3 + 1;
+			if (card_index3 == i) {
+				++card_index4;
+				if (card_index4 == j) {
+					++card_index4;
+				}
+			}
+			int card_index5 = card_index4 + 1;
+			if (card_index5 == i) {
+				++card_index5;
+				if (card_index5 == j) {
+					++card_index5;
+				}
+			}
+			Card card1 = this->hand_vector[card_index1];
+			Card card2 = this->hand_vector[card_index2];
+			Card card3 = this->hand_vector[card_index3];
+			Card card4 = this->hand_vector[card_index4];
+			Card card5 = this->hand_vector[card_index5];
+			Hand tempHand;
+			tempHand.hand_vector.push_back(card1);
+			tempHand.hand_vector.push_back(card2);
+			tempHand.hand_vector.push_back(card3);
+			tempHand.hand_vector.push_back(card4);
+			tempHand.hand_vector.push_back(card5);
+			if (poker_rank(tempHand, best_hand)) {
+				best_hand = tempHand;
+			}
+		}
+	}
+	return best_hand;
 }

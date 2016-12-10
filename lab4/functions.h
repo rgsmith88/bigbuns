@@ -27,6 +27,7 @@ struct Card {
 	bool operator<  (const Card &) const;
 	card_suit suit;
 	card_rank rank;
+	bool faceDown; //NEW FOR SEVEN CARD LARRY
 };
 
 enum outcome {
@@ -47,7 +48,8 @@ enum outcome {
 	not_enough_cards = 14,
 	access_out_of_bounds = 15,
 	erase_out_of_bounds = 16,
-	too_few_arguments = 17
+	too_few_arguments = 17,
+	not_enough_chips = 18 //New
 };
 
 Card parseString(string card_string);

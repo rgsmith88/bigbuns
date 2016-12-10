@@ -26,6 +26,7 @@ public:
 	friend void operator<< (Hand& hand, Deck& deck);
 	friend bool poker_rank(const Hand& hand1, const Hand& hand2);
 	friend bool equivalent_hands(const Hand& hand1, const Hand& hand2);
+	Hand sevenChooseFive();
 private:
 	vector<Card> hand_vector;
 };

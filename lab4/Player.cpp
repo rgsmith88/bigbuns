@@ -19,13 +19,11 @@ Player::Player(std::string n) {
 	move = "";
 	hand = Hand();
 	string fileName = n + ".txt";
-
 	string line;
 	ifstream ifs(fileName);
 	bool wExtracted = false;
 	bool lExtracted = false;
 	bool chipsExtracted = false;
-
 
 	if (ifs.is_open()) {
 		while (getline(ifs, line)) {
@@ -58,6 +56,6 @@ Player::Player(std::string n) {
 }
 
 ostream& operator<< (ostream& out, const Player& p) {
-	out << "Player: " << p.name << " Wins: " << p.handsWon << " Losses: " << p.handsLost << "Chips: "<<p.chips; //new
+	out << "Player: " << p.name << " Wins: " << p.handsWon << " Losses: " << p.handsLost << " Chips: "<<p.chips; //new
 	return out;
 }

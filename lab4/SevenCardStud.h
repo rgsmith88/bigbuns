@@ -1,5 +1,5 @@
-#ifndef FIVECARDDRAW_h
-#define FIVECARDDRAW_h
+#ifndef SEVENCARDSTUD_h
+#define SEVENCARDSTUD_h
 
 #include "stdafx.h"
 #include "functions.h"
@@ -13,8 +13,8 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
-
-class FiveCardDraw : public Game {
+class Game;
+class SevenCardStud : public Game {
 protected:
 	size_t dealer; //start at 0
 	Deck discardDeck; //under the assumption that the deck constructor initializes empty deck
@@ -22,9 +22,10 @@ protected:
 	unsigned int current_bet; //NEW: this will record the current bet for the phase
 
 public:
-	FiveCardDraw();
-	virtual int before_turn(Player& p);
+	SevenCardStud();
 	virtual int turn5(Player& p);
+
+	virtual int before_turn(Player& p);
 	virtual int turn7(Player& p, int turn);
 	virtual int after_turn(Player& p);
 	virtual int before_round();

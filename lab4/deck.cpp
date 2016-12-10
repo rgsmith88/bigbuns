@@ -37,7 +37,7 @@ int Deck::load(char * filename) {
 			string cardString;
 			while (iss >> cardString) {
 				if (cardString.length() == 2 || cardString.length() == 3) { //make sure string is right length
-					empty = false; 
+					empty = false;
 					Card card = parseString(cardString);
 					if (card.suit != invalidSuit && card.rank != invalidRank) { //make sure ranks are between 2-Ace and suits one of the four
 						deck_vector.push_back(card); //push back string to temporary vector hand

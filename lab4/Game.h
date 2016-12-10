@@ -10,7 +10,7 @@
 #include <memory>
 
 using namespace std;
-
+class SevenCardStud;
 class Game {
 protected:
 	static shared_ptr<Game> ptr;
@@ -23,14 +23,21 @@ public:
 	void add_player(const string& str);
 	shared_ptr<Player> find_player(const string& str);
 	int size() const;
+	//virtual ~Game();
 	//Don't need to include virtual destructor b/c of shared_ptrs
 	virtual int before_turn(Player& p) = 0;
-	virtual int turn(Player& p) = 0;
+	virtual int turn5(Player& p) = 0;
+	virtual int turn7(Player& p, int turn) = 0;
 	virtual int after_turn(Player& p) = 0;
 	virtual int before_round() = 0;
 	virtual int round() = 0;
 	virtual int after_round() = 0;
+	virtual void betting_phase(Player& p) = 0;
+	virtual void betting_round() = 0;
 	void remove_player(const string& str);
+	//void add_to_pot(Player& p, unsigned int amount);
+	static bool compareHand(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2);
+	static bool players_same_hands(shared_ptr<Player> p1, shared_ptr<Player> p2);
 };
 
 #endif;
