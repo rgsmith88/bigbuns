@@ -30,6 +30,7 @@ public:
 	virtual int round();
 	virtual int after_round();
 	virtual void betting_phase(Player& p);
+	virtual void betting_round();
 };
 
 bool compareHand(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2);
