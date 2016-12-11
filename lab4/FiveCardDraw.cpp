@@ -75,35 +75,41 @@ void FiveCardDraw::betting_phase(Player &p) {
 					cout << p.name << ": Would you like to bet '1' or '2' chips?" << endl;
 					string betAmount;
 					cin >> betAmount;
-					if (stoi(betAmount) == 1) {
-						validBet = true;
-						p.move = "bet";
-						--p.chips; //take chip from player's chips
-						++commonChipPot; //add that chip to POT
-						++p.chips_bet; //to keep track of how many chips were bet
-
-						bet_on_table = true; //WILL MATTER WHEN WE MAKE GLOBAL ?!?!?! XD
-						++current_bet;
-					}
-					else if (stoi(betAmount) == 2) { //they waged a bet of 2
-						cout << "bet amount: " << betAmount << endl;
-						if (p.chips == 1) { //the player has exactly one chip so we will say invalid bet which will prompt them again to bet or check
-							cout << "You only have one chip so you cannot bet 2" << endl;
-							//validBet = false;
-						}
-						else { //the player has 2 or more chips so they can bet 2 chips
+					try {
+						if (stoi(betAmount) == 1) {
 							validBet = true;
 							p.move = "bet";
-							p.chips -= 2; //takes 2 chips from player
-							commonChipPot += 2; //adds those chips to chipPotle
-							p.chips_bet += 2; //keep track of current chips bet in round
-							bet_on_table = true;
-							current_bet += 2;
+							--p.chips; //take chip from player's chips
+							++commonChipPot; //add that chip to POT
+							++p.chips_bet; //to keep track of how many chips were bet
+
+							bet_on_table = true; //WILL MATTER WHEN WE MAKE GLOBAL ?!?!?! XD
+							++current_bet;
+						}
+						else if (stoi(betAmount) == 2) { //they waged a bet of 2
+							cout << "bet amount: " << betAmount << endl;
+							if (p.chips == 1) { //the player has exactly one chip so we will say invalid bet which will prompt them again to bet or check
+								cout << "You only have one chip so you cannot bet 2" << endl;
+								//validBet = false;
+							}
+							else { //the player has 2 or more chips so they can bet 2 chips
+								validBet = true;
+								p.move = "bet";
+								p.chips -= 2; //takes 2 chips from player
+								commonChipPot += 2; //adds those chips to chipPotle
+								p.chips_bet += 2; //keep track of current chips bet in round
+								bet_on_table = true;
+								current_bet += 2;
+							}
+						}
+						else { // the user entered a bet amount other than '1' or '2' so it's invalid
+							cout << "Invalid Bet Amount" << endl;
+							//validBet = false;
 						}
 					}
-					else { // the user entered a bet amount other than '1' or '2' so it's invalid
-						cout << "Invalid Bet Amount" << endl;
-						//validBet = false;
+					catch (std::invalid_argument& e) {
+						// if no conversion could be performed
+						cout << "Please enter a numerical answer (1 or 2) Error: " << e.what() << endl;
 					}
 				}
 			}
@@ -115,7 +121,8 @@ void FiveCardDraw::betting_phase(Player &p) {
 	}
 	else { //There is a bet placed on the table so the player can either FOLD, CALL, or RAISE
 		while (!validResponse_FCR) {
-			cout << p.name << ": Would you like to 'fold', 'call', or 'raise'?" << endl; //Add call amount?
+			unsigned int call_amount = current_bet - p.chips_bet;
+			cout << "Would you like to 'fold', 'call', or 'raise'? Call Amount: " << call_amount << endl; //Add call amount?
 			string FoldCallOrRaise;
 			cin >> FoldCallOrRaise;
 			if (FoldCallOrRaise == "fold" || FoldCallOrRaise == "Fold") {
@@ -130,7 +137,6 @@ void FiveCardDraw::betting_phase(Player &p) {
 				validResponse_FCR = true;
 				p.move = "call";
 				//check if player has enough money
-				unsigned int call_amount = current_bet - p.chips_bet;
 				if (p.chips < call_amount) {
 					commonChipPot += p.chips;
 					p.chips_bet += p.chips;
@@ -166,28 +172,34 @@ void FiveCardDraw::betting_phase(Player &p) {
 					p.move = "raise";
 				}
 				else {
-					cout << "How many chips would you like to raise? '1' or '2'?" << endl;
+					cout << "How many chips would you like to raise by? '1' or '2'?" << endl;
 					string raiseAmount;
 					cin >> raiseAmount;
-					if (stoi(raiseAmount) == 1) {
-						--p.chips; //take chip from player's chips
-						++commonChipPot; //add that chip to potle
-						++p.chips_bet;
-						++current_bet;
-						validResponse_FCR = true;
-						p.move = "raise";
+					try {
+						if (stoi(raiseAmount) == 1) {
+							++current_bet;
+							p.chips -= (1 + call_amount); //take chips from player's chips
+							commonChipPot += (1 + call_amount); //add those chips to potle
+							p.chips_bet = current_bet;
+							validResponse_FCR = true;
+							p.move = "raise";
+						}
+						else if (stoi(raiseAmount) == 2) {
+							current_bet += 2;
+							p.chips -= (2 + call_amount); //take chips from player's chips
+							commonChipPot += (2 + call_amount); //add those chips to potle
+							p.chips_bet = current_bet;
+							validResponse_FCR = true;
+							p.move = "raise";
+						}
+						else {
+							cout << "invalid response. Raise by a value of '1' or '2'" << endl;
+							//validResponse_FCR = false;
+						}
 					}
-					else if (stoi(raiseAmount) == 2) {
-						p.chips -= 2; //take 2 chips from player's chips
-						commonChipPot += 2; //add them to chipPotle
-						p.chips_bet += 2;
-						current_bet += 2;
-						validResponse_FCR = true;
-						p.move = "raise";
-					}
-					else {
-						cout << "invalid response. Raise by a value of '1' or '2'" << endl;
-						//validResponse_FCR = false;
+					catch (std::invalid_argument& e) {
+						// if no conversion could be performed
+						cout << "Please enter a numerical answer (0, 1, 2, 3, 4, 5) Error: " << e.what() << endl;
 					}
 				}
 			}
@@ -198,8 +210,8 @@ void FiveCardDraw::betting_phase(Player &p) {
 		}
 	}
 }
-
-void FiveCardDraw::betting_round() {
+bool foldWin = false;
+int FiveCardDraw::betting_round() {
 	int start = (this->dealer) + 1;
 	int num_players = (this->players).size();
 	if ((this->dealer) == num_players - 1) {
@@ -213,19 +225,21 @@ void FiveCardDraw::betting_round() {
 	while (!round_over) {
 		cout << "Current Chip Pot: " << commonChipPot << endl;
 		/*for (size_t j = 0; j < (this->players).size(); ++j) {
-		cout << players[j]->name << " move is: " << players[j]->move << endl;
+			cout << players[j]->name << " move is: " << players[j]->move << endl;
 		}*/
 		int position = (start + j) % (this->players).size();
-		if (number_folded == num_players - 1) { //if everyone folded
-			players.at(position)->chips += commonChipPot; //award them entire pot
-			++players.at(position)->handsWon; //increment win count
+		if (number_folded == num_players - 1) { //if everyone but one folded
+			//players.at(position)->chips += commonChipPot; //award them entire pot
+			//++players.at(position)->handsWon; //increment win count
+			foldWin = true;
 			round_over = true; //end round
+			return fold;
 		}
 		/*cout << "Last to Raise: " << last_to_raise << endl;
 		cout << "Position: " << position << endl;
 		cout << "Start position: " << (start) % (this->players).size() << endl;
 		cout << "Previous move: " << players.at(position)->move << endl;*/
-		if (position == last_to_raise) { //if everyone called
+		else if (position == last_to_raise) { //if everyone called
 			round_over = true;
 			cout << "EVERYONE CALLED!" << endl;
 		}
@@ -252,73 +266,76 @@ void FiveCardDraw::betting_round() {
 			players.at(i)->move = "";
 		}
 	}
+	return success;
 }
 
 int FiveCardDraw::before_turn(Player & p) {
-	int cardsToDiscard = 0;
-	cout << endl;
-	cout << p << endl;
-	cout << p.hand;
-	bool validResponse = false;
-	while (!validResponse) {
-		cout << "How many cards would you like to discard?" << endl;
-		string input;
-		cin >> input;
-		try {
-			if (0 <= stoi(input) && stoi(input) <= 5) {
-				validResponse = true;
-				cardsToDiscard = stoi(input);
-			}
-			else {
-				cout << "Please enter a number from 0 to 5" << endl;
-			}
-		}
-		catch (std::invalid_argument& e) {
-			// if no conversion could be performed
-			cout << "Please enter a numerical answer (0, 1, 2, 3, 4, 5) Error: " << e.what() << endl;
-		}
-		catch (std::out_of_range& e) {
-			// if the converted value would fall out of the range of the result type
-			// or if the underlying function (std::strtol or std::strtoull) sets errno
-			// to ERANGE.
-			cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
-		}
-	}
-	while (cardsToDiscard > 0) {
-		cout << "Which card index would you like to discard?" << endl;
+	if (p.move != "fold") {
+		int cardsToDiscard = 0;
+		cout << endl;
+		cout << p << endl;
 		cout << p.hand;
-		string discard;
-		cin >> discard;
-		try {
-			Card toDiscard = p.hand[stoi(discard)];
-			discardDeck.add_card(toDiscard);
-			p.hand.remove_card(stoi(discard));
-			cardsToDiscard--;
-		}
-		catch (std::invalid_argument& e) {
-			// if no conversion could be performed
-			cout << "Please enter a numerical answer (0, 1, 2, ...). Error: " << e.what() << endl;
-		}
-		catch (std::out_of_range& e) {
-			// if the converted value would fall out of the range of the result type
-			// or if the underlying function (std::strtol or std::strtoull) sets errno
-			// to ERANGE.
-			cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
-		}
-		catch (int e) {
-			switch (e) {
-			case erase_out_of_bounds:
-				std::cout << "tried erasing out of bounds!" << std::endl;
-				break;
-			case access_out_of_bounds:
-				std::cout << "tried accessing out of bounds!" << std::endl;
-				break;
-			default:
-				std::cout << "try again" << std::endl;
+		bool validResponse = false;
+		while (!validResponse) {
+			cout << "How many cards would you like to discard?" << endl;
+			string input;
+			cin >> input;
+			try {
+				if (0 <= stoi(input) && stoi(input) <= 5) {
+					validResponse = true;
+					cardsToDiscard = stoi(input);
+				}
+				else {
+					cout << "Please enter a number from 0 to 5" << endl;
+				}
+			}
+			catch (std::invalid_argument& e) {
+				// if no conversion could be performed
+				cout << "Please enter a numerical answer (0, 1, 2, 3, 4, 5) Error: " << e.what() << endl;
+			}
+			catch (std::out_of_range& e) {
+				// if the converted value would fall out of the range of the result type
+				// or if the underlying function (std::strtol or std::strtoull) sets errno
+				// to ERANGE.
+				cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
 			}
 		}
-		catch (...) {
-			cout << "try again" << endl;
+		while (cardsToDiscard > 0) {
+			cout << "Which card index would you like to discard?" << endl;
+			cout << p.hand;
+			string discard;
+			cin >> discard;
+			try {
+				Card toDiscard = p.hand[stoi(discard)];
+				discardDeck.add_card(toDiscard);
+				p.hand.remove_card(stoi(discard));
+				cardsToDiscard--;
+			}
+			catch (std::invalid_argument& e) {
+				// if no conversion could be performed
+				cout << "Please enter a numerical answer (0, 1, 2, ...). Error: " << e.what() << endl;
+			}
+			catch (std::out_of_range& e) {
+				// if the converted value would fall out of the range of the result type
+				// or if the underlying function (std::strtol or std::strtoull) sets errno
+				// to ERANGE.
+				cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
+			}
+			catch (int e) {
+				switch (e) {
+				case erase_out_of_bounds:
+					std::cout << "tried erasing out of bounds!" << std::endl;
+					break;
+				case access_out_of_bounds:
+					std::cout << "tried accessing out of bounds!" << std::endl;
+					break;
+				default:
+					std::cout << "try again" << std::endl;
+				}
+			}
+			catch (...) {
+				cout << "try again" << endl;
+			}
 		}
 	}
 	return success;
@@ -342,12 +359,15 @@ int FiveCardDraw::turn5(Player& p) {
 }
 
 int FiveCardDraw::after_turn(Player& p) {
-	cout << endl << "Player Name: " << p.name << endl;
-	cout << p.hand << endl;
+	if (p.move != "fold") {
+		cout << endl << "Player Name: " << p.name << endl;
+		cout << p.hand << endl;
+	}
 	return success;
 }
 
 int FiveCardDraw::before_round() {
+	this->commonChipPot = 0;
 	for (size_t i = 0; i < players.size(); ++i) { //New: remove chip from each player before round and add to common chip pot
 		--players.at(i)->chips;
 		++commonChipPot;
@@ -366,7 +386,10 @@ int FiveCardDraw::before_round() {
 			players[position]->hand << (this->main_deck);
 		}
 	}
-	betting_round();
+	int betting_round_result = betting_round();
+	if (betting_round_result == fold) {
+		return fold;
+	}
 	for (size_t j = 0; j < (this->players).size(); ++j) {
 		int position = (start + j) % (this->players).size();
 		this->before_turn(*players[position]);
@@ -398,24 +421,57 @@ int FiveCardDraw::after_round() {
 
 	std::sort(temp_players.begin(), temp_players.end(), compareHand);
 
-	for (size_t i = 0; i < temp_players.size(); i++) {
-		if (players.at(i)->move != "fold") {
-			if (i == 0) {
-				++(temp_players.at(i)->handsWon);
-			}
-			else {
-				++(temp_players[i]->handsLost);
-			}
-			cout << temp_players.at(i)->name << endl;
-			cout << temp_players.at(i)->handsWon << " hands won" << endl;
-			cout << temp_players.at(i)->handsLost << " hands lost" << endl;
-			cout << temp_players.at(i)->chips << " chips" << endl;
-			cout << "current hand" << endl;
-			cout << temp_players.at(i)->hand << endl;
+	int num_folded = 0;
+	for (size_t i = 0; i < temp_players.size(); ++i) {
+		if (players.at(i)->move == "fold") {
+			++num_folded;
 		}
 	}
-	for (size_t i = 0; i < temp_players.size(); i++) {
+
+	//if (num_folded != temp_players.size() - 1) {
+	cout << "Fold Win: " << foldWin << endl;
+	if (!foldWin){
+		cout << "AHHH" << endl;
+		for (size_t i = 0; i < temp_players.size(); ++i) {
+			if (players.at(i)->move != "fold") {
+				if (i == 0) {
+					++(temp_players.at(i)->handsWon);
+					cout << "Chips before: " << temp_players.at(i)->chips << endl;
+					temp_players.at(i)->chips += commonChipPot; //award them entire pot
+					cout << "Chips after: " << temp_players.at(i)->chips << endl;
+					cout << "Giving " << temp_players.at(i)->name << " a win for winning, not folding" << endl;
+				}
+				else {
+					++(temp_players[i]->handsLost);
+					cout << "Giving " << temp_players.at(i)->name << " a loss for losing, not folding" << endl;
+				}
+				cout << temp_players.at(i)->name << endl;
+				cout << temp_players.at(i)->handsWon << " hands won" << endl;
+				cout << temp_players.at(i)->handsLost << " hands lost" << endl;
+				cout << temp_players.at(i)->chips << " chips" << endl;
+				cout << "current hand" << endl;
+				cout << temp_players.at(i)->hand << endl;
+			}
+		}
+	}
+	else {
+		for (size_t i = 0; i < temp_players.size(); ++i) {
+			if (players.at(i)->move != "fold") {
+				++(temp_players.at(i)->handsWon);
+				players.at(i)->chips += commonChipPot; //award them entire pot
+				cout << temp_players.at(i)->name << endl;
+				cout << temp_players.at(i)->handsWon << " hands won" << endl;
+				cout << temp_players.at(i)->handsLost << " hands lost" << endl;
+				cout << temp_players.at(i)->chips << " chips" << endl;
+				cout << "current hand" << endl;
+				cout << temp_players.at(i)->hand << endl;
+				foldWin = false;
+			}
+		}
+	}
+	for (size_t i = 0; i < temp_players.size(); ++i) {
 		if (players.at(i)->move == "fold") {
+			cout << "Giving " << temp_players.at(i)->name << " a loss for folding" << endl;
 			++(temp_players[i]->handsLost);
 			cout << temp_players.at(i)->name << endl;
 			cout << temp_players.at(i)->handsWon << " hands won" << endl;
@@ -440,6 +496,7 @@ int FiveCardDraw::after_round() {
 	//NEW. AFTER ROUND CHECK PLAYERS CHIPS AND ASK IF THEY WANT TO RESET OR LEAVE
 	for (size_t i = 0; i < temp_players.size(); i++) {
 		if (temp_players.at(i)->chips <= 0) {
+			cout << temp_players.at(i)->name << endl;
 			cout << "You don't have any chips left. In order to keep playing you must reset your chips to 20. Would you like to do that? Please enter 'yes' or 'no'." << endl;
 			string responseChips;
 			cin >> responseChips;

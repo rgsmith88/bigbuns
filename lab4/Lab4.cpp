@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 				cout << "The game has already started" << endl;
 			}
 			if (e == unknown_game) {
-				cout << "The game you have entered is unknown, please enter FiveCardDraw" << endl;
+				cout << "The game you have entered is unknown, please enter FiveCardDraw or SevenCardStud" << endl;
 			}
 			Game::stop_game();
 			return e;
@@ -65,8 +65,10 @@ int main(int argc, char* argv[]) {
 	}
 
 	while (myGame_instance->size() >= 2) { //at least two palyers in the game
-		myGame_instance->before_round();
-		myGame_instance->round();
+		int before_result = myGame_instance->before_round();
+		if (before_result != fold) {
+			myGame_instance->round();
+		}
 		myGame_instance->after_round();
 	}
 

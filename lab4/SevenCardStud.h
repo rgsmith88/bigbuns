@@ -32,7 +32,7 @@ public:
 	virtual int round();
 	virtual int after_round();
 	virtual void betting_phase(Player& p);
-	virtual void betting_round();
+	virtual int betting_round();
 };
 
 #endif

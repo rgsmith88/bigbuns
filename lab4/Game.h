@@ -33,7 +33,7 @@ public:
 	virtual int round() = 0;
 	virtual int after_round() = 0;
 	virtual void betting_phase(Player& p) = 0;
-	virtual void betting_round() = 0;
+	virtual int betting_round() = 0;
 	void remove_player(const string& str);
 	//void add_to_pot(Player& p, unsigned int amount);
 	static bool compareHand(std::shared_ptr<Player> p1, std::shared_ptr<Player> p2);

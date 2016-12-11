@@ -18,7 +18,6 @@ using namespace std;
 
 SevenCardStud::SevenCardStud()
 	: dealer(0), commonChipPot(0), current_bet(0) //commonChipPot & current_bet are NEW
-
 {
 	for (int i = 2; i <= 14; i++) {
 		for (int j = 0; j < 4; j++) {
@@ -194,7 +193,7 @@ void SevenCardStud::betting_phase(Player &p) {
 	}
 }
 
-void SevenCardStud::betting_round() {
+int SevenCardStud::betting_round() {
 	int start = (this->dealer) + 1;
 	int num_players = (this->players).size();
 	if ((this->dealer) == num_players - 1) {
@@ -248,6 +247,7 @@ void SevenCardStud::betting_round() {
 			players.at(i)->move = "";
 		}
 	}
+	return success;
 }
 
 int SevenCardStud::before_turn(Player & p) {
@@ -346,11 +346,11 @@ int SevenCardStud::turn7(Player& p, int turn) {
 int SevenCardStud::after_turn(Player& p) {
 	for (size_t i = 0; i < players.size(); i++) {
 
-		cout << endl << "Player Name: " << p.name << endl;
-		cout << players.size() << endl;
+		//cout << endl << "Player Name: " << p.name << endl;
+		//cout << players.size() << endl;
 		if (players.at(i)->name == p.name) {
 			//cout << "should print player hand if they have one" << endl;
-			cout << p.hand << endl;
+			cout <<p.name<<" here is your hand: "<< p.hand << endl;
 		}
 		else {
 			string handString;
@@ -369,7 +369,7 @@ int SevenCardStud::after_turn(Player& p) {
 				}
 			}
 			//cout << "boutta try printing the hand wish me luck XD hehehehe" << endl;
-			cout << handString << endl;
+			cout << players.at(i)->name<<"'s hand: " handString << endl;
 		}
 		//return success;
 	}
