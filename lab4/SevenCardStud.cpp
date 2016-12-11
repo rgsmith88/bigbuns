@@ -31,13 +31,22 @@ SevenCardStud::SevenCardStud()
 }
 
 
-
+bool bet_on_table = false;
 //NEW: BETTING PHASE
 void SevenCardStud::betting_phase(Player &p) {
 	bool bet_on_table = false; //TEMP
 	bool validResponse_CB = false;
 	bool validResponse_FCR = false;
 	//bool playerDone = false;
+	cout << endl;
+	cout << p << endl;
+	cout << p.hand;
+	for (size_t j = 0; j < (this->players).size(); ++j) {
+		if (players[j]->move == "bet" || players[j]->move == "raise") {
+			bet_on_table = true;
+		}
+	}
+	//cout << "Bet On Table: " << bet_on_table << endl;
 
 	if (p.chips == 0) {
 		cout << "This player has no more chips, let em be let em be, let em be let em be sing a song of freedom let em be bum bum bum" << endl;
@@ -45,7 +54,7 @@ void SevenCardStud::betting_phase(Player &p) {
 	}
 	else if (!bet_on_table) { // players may either check or bet 1-2 chips
 		while (!validResponse_CB) {
-			cout << "Would you like to 'check' or 'bet'?" << endl;
+			cout << p.name << ": Would you like to 'check' or 'bet'?" << endl;
 			string checkOrBet;
 			cin >> checkOrBet;
 			if (checkOrBet == "check" || checkOrBet == "Check") {
@@ -58,7 +67,7 @@ void SevenCardStud::betting_phase(Player &p) {
 				validResponse_CB = true;
 				bool validBet = false;
 				while (!validBet) {
-					cout << "Would you like to bet '1' or '2' chips?" << endl;
+					cout << p.name << ": Would you like to bet '1' or '2' chips?" << endl;
 					string betAmount;
 					cin >> betAmount;
 					if (stoi(betAmount) == 1) {
@@ -72,6 +81,7 @@ void SevenCardStud::betting_phase(Player &p) {
 						++current_bet;
 					}
 					else if (stoi(betAmount) == 2) { //they waged a bet of 2
+						cout << "bet amount: " << betAmount << endl;
 						if (p.chips == 1) { //the player has exactly one chip so we will say invalid bet which will prompt them again to bet or check
 							cout << "You only have one chip so you cannot bet 2" << endl;
 							//validBet = false;
@@ -100,7 +110,7 @@ void SevenCardStud::betting_phase(Player &p) {
 	}
 	else { //There is a bet placed on the table so the player can either FOLD, CALL, or RAISE
 		while (!validResponse_FCR) {
-			cout << "Would you like to 'fold', 'call', or 'raise'?" << endl;
+			cout << p.name << ": Would you like to 'fold', 'call', or 'raise'?" << endl; //Add call amount?
 			string FoldCallOrRaise;
 			cin >> FoldCallOrRaise;
 			if (FoldCallOrRaise == "fold" || FoldCallOrRaise == "Fold") {
@@ -177,7 +187,7 @@ void SevenCardStud::betting_phase(Player &p) {
 				}
 			}
 			else {
-				cout << "ivalid response" << endl;
+				cout << "invalid response" << endl;
 				validResponse_FCR = false;
 			}
 		}
@@ -192,36 +202,46 @@ void SevenCardStud::betting_round() {
 	}
 	//for (size_t j = 0; j < (this->players).size(); ++j) {
 	size_t j = 0;
-	size_t last_to_raise = -1; //to keep track of index of last person who raised
+	int last_to_raise = -1; //to keep track of index of last person who raised
 	int number_folded = 0;
 	bool round_over = false;
 	while (!round_over) {
+		cout << "Current Chip Pot: " << commonChipPot << endl;
+		/*for (size_t j = 0; j < (this->players).size(); ++j) {
+		cout << players[j]->name << " move is: " << players[j]->move << endl;
+		}*/
 		int position = (start + j) % (this->players).size();
 		if (number_folded == num_players - 1) { //if everyone folded
 			players.at(position)->chips += commonChipPot; //award them entire pot
 			++players.at(position)->handsWon; //increment win count
 			round_over = true; //end round
 		}
-		if (position == last_to_raise) { //if everyone called;
+		/*cout << "Last to Raise: " << last_to_raise << endl;
+		cout << "Position: " << position << endl;
+		cout << "Start position: " << (start) % (this->players).size() << endl;
+		cout << "Previous move: " << players.at(position)->move << endl;*/
+		if (position == last_to_raise) { //if everyone called
 			round_over = true;
+			cout << "EVERYONE CALLED!" << endl;
 		}
 		//if everyone checked
-		if (last_to_raise == -1 && position == ((start) % (this->players).size()) && players.at(position)->move == "checked") {
+		else if (last_to_raise == -1 && position == ((start) % (this->players).size()) && players.at(position)->move == "check") {
 			round_over = true;
 		}
 		else if (players.at(position)->move != "fold") {
 			betting_phase(*players.at(position));
 			string player_move = players.at(position)->move;
-			if (player_move == "bet" || player_move == "raised") {
+			if (player_move == "bet" || player_move == "raise") {
 				last_to_raise = position;
 			}
 			if (player_move == "fold") {
 				++number_folded;
-
 			}
 		}
 		++j;
 	}
+	cout << "BETTING ROUND OVER!!!" << endl;
+	//after_round();
 	//clear p.move for all p if they didnt fold
 	for (size_t i = 0; i < players.size(); ++i) {
 		if (players.at(i)->move != "fold") {
@@ -231,106 +251,111 @@ void SevenCardStud::betting_round() {
 }
 
 int SevenCardStud::before_turn(Player & p) {
-//	int cardsToDiscard = 0;
-//	cout << endl;
-//	cout << p << endl;
-//	cout << p.hand;
-//	bool validResponse = false;
-//	while (!validResponse) {
-//		cout << "How many cards would you like to discard?" << endl;
-//		string input;
-//		cin >> input;
-//		try {
-//			if (0 <= stoi(input) && stoi(input) <= 5) {
-//				validResponse = true;
-//				cardsToDiscard = stoi(input);
-//			}
-//			else {
-//				cout << "Please enter a number from 0 to 5" << endl;
-//			}
-//		}
-//		catch (std::invalid_argument& e) {
-//			// if no conversion could be performed
-//			cout << "Please enter a numerical answer (0, 1, 2, 3, 4, 5) Error: " << e.what() << endl;
-//		}
-//		catch (std::out_of_range& e) {
-//			// if the converted value would fall out of the range of the result type
-//			// or if the underlying function (std::strtol or std::strtoull) sets errno
-//			// to ERANGE.
-//			cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
-//		}
-//	}
-//	while (cardsToDiscard > 0) {
-//		cout << "Which card index would you like to discard?" << endl;
-//		cout << p.hand;
-//		string discard;
-//		cin >> discard;
-//		try {
-//			Card toDiscard = p.hand[stoi(discard)];
-//			discardDeck.add_card(toDiscard);
-//			p.hand.remove_card(stoi(discard));
-//			cardsToDiscard--;
-//		}
-//		catch (std::invalid_argument& e) {
-//			// if no conversion could be performed
-//			cout << "Please enter a numerical answer (0, 1, 2, ...). Error: " << e.what() << endl;
-//		}
-//		catch (std::out_of_range& e) {
-//			// if the converted value would fall out of the range of the result type
-//			// or if the underlying function (std::strtol or std::strtoull) sets errno
-//			// to ERANGE.
-//			cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
-//		}
-//		catch (int e) {
-//			switch (e) {
-//			case erase_out_of_bounds:
-//				std::cout << "tried erasing out of bounds!" << std::endl;
-//				break;
-//			case access_out_of_bounds:
-//				std::cout << "tried accessing out of bounds!" << std::endl;
-//				break;
-//			default:
-//				std::cout << "try again" << std::endl;
-//			}
-//		}
-//		catch (...) {
-//			cout << "try again" << endl;
-//		}
-//	}
+	//	int cardsToDiscard = 0;
+	//	cout << endl;
+	//	cout << p << endl;
+	//	cout << p.hand;
+	//	bool validResponse = false;
+	//	while (!validResponse) {
+	//		cout << "How many cards would you like to discard?" << endl;
+	//		string input;
+	//		cin >> input;
+	//		try {
+	//			if (0 <= stoi(input) && stoi(input) <= 5) {
+	//				validResponse = true;
+	//				cardsToDiscard = stoi(input);
+	//			}
+	//			else {
+	//				cout << "Please enter a number from 0 to 5" << endl;
+	//			}
+	//		}
+	//		catch (std::invalid_argument& e) {
+	//			// if no conversion could be performed
+	//			cout << "Please enter a numerical answer (0, 1, 2, 3, 4, 5) Error: " << e.what() << endl;
+	//		}
+	//		catch (std::out_of_range& e) {
+	//			// if the converted value would fall out of the range of the result type
+	//			// or if the underlying function (std::strtol or std::strtoull) sets errno
+	//			// to ERANGE.
+	//			cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
+	//		}
+	//	}
+	//	while (cardsToDiscard > 0) {
+	//		cout << "Which card index would you like to discard?" << endl;
+	//		cout << p.hand;
+	//		string discard;
+	//		cin >> discard;
+	//		try {
+	//			Card toDiscard = p.hand[stoi(discard)];
+	//			discardDeck.add_card(toDiscard);
+	//			p.hand.remove_card(stoi(discard));
+	//			cardsToDiscard--;
+	//		}
+	//		catch (std::invalid_argument& e) {
+	//			// if no conversion could be performed
+	//			cout << "Please enter a numerical answer (0, 1, 2, ...). Error: " << e.what() << endl;
+	//		}
+	//		catch (std::out_of_range& e) {
+	//			// if the converted value would fall out of the range of the result type
+	//			// or if the underlying function (std::strtol or std::strtoull) sets errno
+	//			// to ERANGE.
+	//			cout << "Number is out of range of int capacity. Error: " << e.what() << endl;
+	//		}
+	//		catch (int e) {
+	//			switch (e) {
+	//			case erase_out_of_bounds:
+	//				std::cout << "tried erasing out of bounds!" << std::endl;
+	//				break;
+	//			case access_out_of_bounds:
+	//				std::cout << "tried accessing out of bounds!" << std::endl;
+	//				break;
+	//			default:
+	//				std::cout << "try again" << std::endl;
+	//			}
+	//		}
+	//		catch (...) {
+	//			cout << "try again" << endl;
+	//		}
+	//	}
 	return success;
 }
 
 int SevenCardStud::turn7(Player& p, int turn) {
 	//int cards_needed = 5 - p.hand.size();
 	//while (cards_needed > 0) {
-		int main_deck_size = (this->main_deck).size(); //store main deck size
-		if (main_deck_size == 0) { //check if main deck is empty
-			if ((this->discardDeck).size() == 0) { //check if discard deck is empty
-				return not_enough_cards;
-			}
-			(this->discardDeck).shuffle(); //shuffle discard deck
-			p.hand << (this->discardDeck); //deal cards from discard deck
+	int main_deck_size = (this->main_deck).size(); //store main deck size
+	if (main_deck_size == 0) { //check if main deck is empty
+		if ((this->discardDeck).size() == 0) { //check if discard deck is empty
+			cout << "not enough cards" << endl;
+			return not_enough_cards;
 		}
-		p.hand << (this->main_deck); //deal cards from main deck
-		if (turn == 4) { //TURN IS 4 BECAUSE THEY ARE DELT 4 CARDS IN A GAME AND THE LAST ONE IS FACE DOWN
-			p.hand[turn].faceDown = true;
-		}
+		(this->discardDeck).shuffle(); //shuffle discard deck
+		p.hand << (this->discardDeck); //deal cards from discard deck
+	}
+	p.hand << (this->main_deck); //deal cards from main deck
+	if (turn == 4) { //TURN IS 4 BECAUSE THEY ARE DELT 4 CARDS IN A GAME AND THE LAST ONE IS FACE DOWN
+		p.hand[6].faceDown = true;
+	}
 	//	--cards_needed;
 	//}
 
-	
+
 	return success;
 }
 
 int SevenCardStud::after_turn(Player& p) {
 	for (size_t i = 0; i < players.size(); i++) {
+
 		cout << endl << "Player Name: " << p.name << endl;
+		cout << players.size() << endl;
 		if (players.at(i)->name == p.name) {
+			//cout << "should print player hand if they have one" << endl;
 			cout << p.hand << endl;
 		}
 		else {
 			string handString;
-			for (int j = 0; j < players.at(i)->hand.size(); i++) {
+			//cout << "is the hand empty perhaps? hand size: " << players.at(i)->hand.size() << endl;
+			for (int j = 0; j < players.at(i)->hand.size(); j++) {
 				Card c = players.at(i)->hand[j];
 				if (j != 0) {
 					handString += " ";
@@ -343,10 +368,12 @@ int SevenCardStud::after_turn(Player& p) {
 					handString += enum_suit_strings[c.suit];
 				}
 			}
+			//cout << "boutta try printing the hand wish me luck XD hehehehe" << endl;
 			cout << handString << endl;
 		}
-		return success;
+		//return success;
 	}
+	//cout << "going to return success" << endl;
 	return success;
 }
 
@@ -369,17 +396,17 @@ int SevenCardStud::before_round() {
 			int position = (start + j) % (this->players).size();
 			players[position]->hand << (this->main_deck);
 			if (i < 2) { //The first two cards we set facedown to true
-				players[position]->hand[i].faceDown = true;
+				(players[position]->hand)[i].faceDown = true;
 			}
 			else {
-				players[position]->hand[i].faceDown = false; //cuckiewar will prolly change this because its set to false in the constructor 
+				//players[position]->hand[i].faceDown = false; //cuckiewar will prolly change this because its set to false in the constructor
 			}
 		}
 	}
 	//dont need stuff below because in fivecard draw before turn asked if they want to get rid of any cards.you dont do this in 7 card willis
 	/*for (size_t j = 0; j < (this->players).size(); ++j) {
-		int position = (start + j) % (this->players).size();
-		this->before_turn(*players[position]);
+	int position = (start + j) % (this->players).size();
+	this->before_turn(*players[position]);
 	}*/
 	return success;
 }
@@ -391,18 +418,21 @@ int SevenCardStud::round() {
 		start = 0;
 	}
 	betting_round();
-	for (int i = 1; i <= 4; i++) {
+	for (int i = 1; i <= 4; ++i) {
 		for (size_t j = 0; j < (this->players).size(); ++j) {
 			int position = (start + j) % (this->players).size();
 			int turn_result = this->turn7(*players[position], i); //players are delt a card here
 			if (turn_result != success) {
+				//cout << "gona return tur_result" << endl;
 				return turn_result;
 			}
+			//cout << "Instantiating after_turn_result...idk why tho" << endl;
 			int after_turn_result = this->after_turn(*players[position]); //this prints the player and every ones hands for each player in the game
 		}
+		//cout << "new betting round chea" << endl;
 		betting_round();
+		//after_round();
 	}
-	
 	return success;
 }
 
@@ -427,13 +457,22 @@ bool players_same_hands(shared_ptr<Player> p1, shared_ptr<Player> p2) {
 }
 
 int SevenCardStud::after_round() {
-
+	cout << "after_round" << endl;
 	std::vector<std::shared_ptr<Player>> temp_players(players);
-	for (size_t i = 0; i < temp_players.size(); i++) {
+	cout << "temp players size: " << temp_players.size() << endl;
+	for (size_t i = 0; i < temp_players.size(); ++i) {
 		/*Hand temp_hand = temp_players.at(i)->hand;
 		Hand new_hand = sevenChooseFive(temp_hand);*/
-		temp_players.at(i)->hand = temp_players.at(i)->hand.sevenChooseFive();
+		cout << "We in here??" << endl;
+		//temp_players.at(i)->hand = temp_players.at(i)->hand.sevenChooseFive();
+		Hand new_hand = temp_players.at(i)->hand.sevenChooseFive();
+		cout << "YAY" << endl;
+		cout << new_hand << endl;
+		temp_players.at(i)->hand = new_hand;
+		cout << "temp_players.at(i)->hand = new_hand;" << endl;
+		cout << temp_players.at(i)->hand << endl;
 	}
+	cout << "We out here!" << endl;
 	std::sort(temp_players.begin(), temp_players.end(), compareHand);
 
 	for (size_t i = 0; i < temp_players.size(); i++) {
@@ -547,13 +586,15 @@ int SevenCardStud::after_round() {
 				}
 			}
 		}
+
 	}
+
 	if (players.size() > 0) {
 		dealer = (dealer + 1) % players.size();
 	}
 	return success;
 }
 int SevenCardStud::turn5(Player& p) {
-	//do nothing 
+	//do nothing
 	return 0;
 }

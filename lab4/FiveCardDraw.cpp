@@ -213,7 +213,7 @@ void FiveCardDraw::betting_round() {
 	while (!round_over) {
 		cout << "Current Chip Pot: " << commonChipPot << endl;
 		/*for (size_t j = 0; j < (this->players).size(); ++j) {
-			cout << players[j]->name << " move is: " << players[j]->move << endl;
+		cout << players[j]->name << " move is: " << players[j]->move << endl;
 		}*/
 		int position = (start + j) % (this->players).size();
 		if (number_folded == num_players - 1) { //if everyone folded

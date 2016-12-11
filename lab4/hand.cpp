@@ -115,8 +115,8 @@ string Hand::asString() const {
 		//	toReturn += "*";
 		//}
 		//else {
-			toReturn += enum_rank_strings[c.rank];
-			toReturn += enum_suit_strings[c.suit];
+		toReturn += enum_rank_strings[c.rank];
+		toReturn += enum_suit_strings[c.suit];
 		//}
 	}
 	return toReturn;
@@ -136,7 +136,7 @@ void operator<< (Hand& hand, Deck& deck) {
 	deck.deck_vector = dv;
 	vector<Card> hv = hand.hand_vector;
 	hv.push_back(dv_last);
-	sort(hv.begin(), hv.end());
+	//sort(hv.begin(), hv.end());
 	hand.hand_vector = hv;
 }
 
@@ -185,7 +185,7 @@ bool poker_rank(const Hand& hand1, const Hand& hand2) {
 	int hv2cr5 = enum_rank_ints[(hv2.at(4)).rank];
 	if (hand1_rank == hand2_rank) {
 		if (hand1_rank == 5 || hand1_rank == 0) { //No Rank or Flush
-			for (int i = 4; i >= 0; ++i) {
+			for (int i = 4; i >= 0; --i) {
 				if (hv2.at(i) < hv1.at(i)) {
 					return true;
 				}
@@ -289,61 +289,86 @@ bool equivalent_hands(const Hand& hand1, const Hand& hand2) {
 	return true;
 }
 
-//THIS IS MADE FOR SEVEN CARD STUD 
+//THIS IS MADE FOR SEVEN CARD STUD
 Hand Hand::sevenChooseFive() {
+	std::cout << "first line of sevenChooseFive" << std::endl;
+	sort((this->hand_vector).begin(), (this->hand_vector).end());
+	std::cout << "sorted the hand" << std::endl;
+	Hand original_hand = *this;
 	Hand best_hand;
+	cout << "original hand: " << endl;
+	cout << original_hand;
 	for (int i = 0; i < 6; ++i) {
+		std::cout << "entered first 4loop" << std::endl;
 		for (int j = i + 1; j < 7; ++j) {
+			std::cout << "entered second 4 loop" << endl;
+			cout << "i: " << i << " j: " << j << endl;
 			int card_index1 = 0;
-			if (card_index1 == i) {
+			if (card_index1 == i || card_index1 == j) {
 				++card_index1;
 				if (card_index1 == j) {
 					++card_index1;
 				}
 			}
 			int card_index2 = card_index1 + 1;
-			if (card_index2 == i) {
+			if (card_index2 == i || card_index2 == j) {
 				++card_index2;
 				if (card_index2 == j) {
 					++card_index2;
 				}
 			}
 			int card_index3 = card_index2 + 1;
-			if (card_index3 == i) {
+			if (card_index3 == i || card_index3 == j) {
 				++card_index3;
 				if (card_index3 == j) {
 					++card_index3;
 				}
 			}
 			int card_index4 = card_index3 + 1;
-			if (card_index3 == i) {
+			if (card_index3 == i || card_index4 == j) {
 				++card_index4;
 				if (card_index4 == j) {
 					++card_index4;
 				}
 			}
 			int card_index5 = card_index4 + 1;
-			if (card_index5 == i) {
+			if (card_index5 == i || card_index5 == j) {
 				++card_index5;
 				if (card_index5 == j) {
 					++card_index5;
 				}
 			}
-			Card card1 = this->hand_vector[card_index1];
-			Card card2 = this->hand_vector[card_index2];
-			Card card3 = this->hand_vector[card_index3];
-			Card card4 = this->hand_vector[card_index4];
-			Card card5 = this->hand_vector[card_index5];
+			cout << card_index1 << card_index2 << card_index3 << card_index4 << card_index5 << endl;
+			Card card1 = (this->hand_vector)[card_index1];
+			Card card2 = (this->hand_vector)[card_index2];
+			Card card3 = (this->hand_vector)[card_index3];
+			Card card4 = (this->hand_vector)[card_index4];
+			Card card5 = (this->hand_vector)[card_index5];
+			cout << "CARDS MADE BRAH" << endl;
 			Hand tempHand;
 			tempHand.hand_vector.push_back(card1);
 			tempHand.hand_vector.push_back(card2);
 			tempHand.hand_vector.push_back(card3);
 			tempHand.hand_vector.push_back(card4);
 			tempHand.hand_vector.push_back(card5);
-			if (poker_rank(tempHand, best_hand)) {
+			cout << "temp hand made" << endl;
+			cout << tempHand;
+			if (i == 0 && j == 1) {
+				cout << "INITIAL HAND!" << endl;
 				best_hand = tempHand;
 			}
+			else if (poker_rank(tempHand, best_hand)) {
+				cout << "iff yee?" << endl;
+				best_hand = tempHand;
+				cout << "iff yee" << endl;
+			}
+			cout << "current besty" << endl;
+			cout << best_hand << endl;
 		}
 	}
+	cout << "original hand: " << endl;
+	cout << original_hand;
+	std::cout << "best hand: "<< std::endl;
+	std::cout<<best_hand << endl;
 	return best_hand;
 }
